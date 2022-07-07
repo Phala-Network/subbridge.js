@@ -1,0 +1,28 @@
+{
+  "name": "subbridge.js",
+  "version": "0.1.0",
+  "description": "SubBridge Javascript SDK for making and query crosschain transactions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tolak/subbridge.js.git"
+  },
+  "keywords": [
+    "SubBridge",
+    "Crosschain",
+    "Index"
+  ],
+  "author": "Wenfeng Wang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tolak/subbridge.js/issues"
+  },
+  "homepage": "https://github.com/tolak/subbridge.js#readme",
+  "dependencies": {
+    "graphql": "^16.5.0",
+    "graphql-request": "^4.3.0"
+  }
+}
