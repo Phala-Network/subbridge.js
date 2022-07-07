@@ -11,6 +11,10 @@ async function main() {
     console.log(`\n============ Latest 3 receiving history =============\n${JSON.stringify(await Indexer.chainbridgeEvmLimittedReceivedHistory('kovan', '0xA29D4E0F035cb50C0d78c8CeBb56Ca292616Ab20', 3), null, 2)}`);
     // ChainBridge: Query receiving confirmation of a specific incoming transaction
     console.log(`\n============ Confirmation of transaction{originChain: thala, destChain: kovan, depositNonce: 9} =============\n${JSON.stringify(await Indexer.chainbridgeEvmReceiveConfirm('kovan', Indexer.getChainbridgeChainid('thala'), 9), null, 2)}`);
+    // ChainBridge: Query sender sending count
+    console.log(`\n============ Sending count =============\n${JSON.stringify(await Indexer.chainbridgeSendCount('kovan', '0xf2c420bab910c0e9c547a4789d9a50dd5a846739'), null, 2)}`);
+    // ChainBridge: Query receiving count
+    console.log(`\n============ Receiving count =============\n${JSON.stringify(await Indexer.chainbridgeReceiveCount('kovan', '0xA29D4E0F035cb50C0d78c8CeBb56Ca292616Ab20'), null, 2)}`);
 }
 
 main().catch(console.error).finally(() => process.exit());

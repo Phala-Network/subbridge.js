@@ -9,6 +9,50 @@ function getChainbridgeChainid(network) {
     return ChainBridgeChainId[network.toLowerCase()];
 }
 
+async function chainbridgeSendCount(network, sender) {
+    let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
+    let data;
+    try {
+        data = await client.request(gql`
+        {
+            sendingCounts (where: {id: \"${sender.toLowerCase()}\"}) {
+                id
+                count
+            }
+        }
+        `);
+    } catch (e) {
+        throw new Error(
+          'Error getting ctxSents from blockchain: ' +
+            JSON.stringify(e) +
+            JSON.stringify(data)
+        );
+    }
+    return data.sendingCounts;
+}
+
+async function chainbridgeReceiveCount(network, recipient) {
+    let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
+    let data;
+    try {
+        data = await client.request(gql`
+        {
+            recevingCounts (where: {id: \"${recipient.toLowerCase()}\"}) {
+                id
+                count
+            }
+        }
+        `);
+    } catch (e) {
+        throw new Error(
+          'Error getting ctxSents from blockchain: ' +
+            JSON.stringify(e) +
+            JSON.stringify(data)
+        );
+    }
+    return data.recevingCounts;
+}
+
 async function chainbridgeEvmSendHistory(network, sender) {
     let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
     let data;
@@ -157,6 +201,8 @@ async function chainbridgeEvmReceiveConfirm(network, originChainId, depositNonce
 
 module.exports = {
     getChainbridgeChainid,
+    chainbridgeSendCount,
+    chainbridgeReceiveCount,
     chainbridgeEvmSendHistory,
     chainbridgeEvmLimittedSendHistory,
     chainbridgeEvmReceivedHistory,
