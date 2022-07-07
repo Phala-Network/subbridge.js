@@ -70,7 +70,8 @@ async function chainbridgeEvmSendHistory(network, sender) {
                 sendTx {
                     hash
                 }
-                sender
+                sender,
+                index
             }
         }
         `);
@@ -101,7 +102,40 @@ async function chainbridgeEvmLimittedSendHistory(network, sender, count) {
                 sendTx {
                     hash
                 }
-                sender
+                sender,
+                index
+            }
+        }
+        `);
+    } catch (e) {
+        throw new Error(
+          'Error getting ctxSents from blockchain: ' +
+            JSON.stringify(e) +
+            JSON.stringify(data)
+        );
+    }
+    return data.ctxSents;
+}
+
+async function chainbridgeEvmRangeSendHistory(network, sender, from, to) {
+    let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
+    let data;
+    try {
+        data = await client.request(gql`
+        {
+            ctxSents (orderBy: createdAt, orderDirection: desc, where: {sender: \"${sender.toLowerCase()}\", index_gte: ${Number(from)}, index_lte: ${Number(to)}}) {
+                id
+                createdAt
+                destChainId
+                depositNonce
+                resourceId
+                amount
+                recipient
+                sendTx {
+                    hash
+                }
+                sender,
+                index
             }
         }
         `);
@@ -129,7 +163,8 @@ async function chainbridgeEvmReceivedHistory(network, recipient) {
                 amount
                 tx {
                     hash
-                }
+                },
+                index
             }
         }
         `);
@@ -157,7 +192,37 @@ async function chainbridgeEvmLimittedReceivedHistory(network, recipient, count) 
                 amount
                 tx {
                     hash
-                }
+                },
+                iindex
+            }
+        }
+        `);
+    } catch (e) {
+        throw new Error(
+          "Error getting ctxSents from blockchain: " +
+            JSON.stringify(e) +
+            JSON.stringify(data)
+        );
+    }
+    return data.erc20Depositeds;
+}
+
+async function chainbridgeEvmRangeReceivedHistory(network, recipient, from, to) {
+    let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
+    let data;
+    // Retrieve ERC20Deposited records according to recipient
+    try {
+        data = await client.request(gql`
+        {
+            erc20Depositeds (orderBy: createdAt, orderDirection: desc, where: {recipient: \"${recipient.toLowerCase()}\",  index_gte: ${Number(from)}, index_lte: ${Number(to)}}) {
+                createdAt
+                token
+                recipient
+                amount
+                tx {
+                    hash
+                },
+                index
             }
         }
         `);
@@ -205,7 +270,9 @@ module.exports = {
     chainbridgeReceiveCount,
     chainbridgeEvmSendHistory,
     chainbridgeEvmLimittedSendHistory,
+    chainbridgeEvmRangeSendHistory,
     chainbridgeEvmReceivedHistory,
     chainbridgeEvmLimittedReceivedHistory,
+    chainbridgeEvmRangeReceivedHistory,
     chainbridgeEvmReceiveConfirm,
 }
