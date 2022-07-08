@@ -193,7 +193,7 @@ async function chainbridgeEvmLimittedReceivedHistory(network, recipient, count) 
                 tx {
                     hash
                 },
-                iindex
+                index
             }
         }
         `);
