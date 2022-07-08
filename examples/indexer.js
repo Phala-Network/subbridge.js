@@ -1,4 +1,4 @@
-const Indexer = require('../src/indexer');
+const { Indexer } = require('../dist/subbridge-node.js');
 
 async function main() {
     // ChainBridge: Query all sending history by sender
