@@ -2,9 +2,11 @@
   "name": "subbridge.js",
   "version": "0.1.0",
   "description": "SubBridge Javascript SDK for making and query crosschain transactions",
-  "main": "index.js",
+  "main": "dis/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild src/index.js --bundle --minify --sourcemap --outfile=dist/subbridge.js",
+    "build-node": "esbuild src/index.js --bundle --minify --sourcemap --platform=node --outfile=dist/subbridge-node.js"
   },
   "repository": {
     "type": "git",
@@ -24,5 +26,8 @@
   "dependencies": {
     "graphql": "^16.5.0",
     "graphql-request": "^4.3.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.48"
   }
 }
