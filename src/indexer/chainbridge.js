@@ -2,7 +2,7 @@ const { gql, GraphQLClient } = require('graphql-request');
 const { ChainId: ChainBridgeChainId } = require('../chainbridge');
 const GraphEndpoint = require('../graph.default');
 
-function getChainbridgeChainid(network) {
+function chainbridgeChainid(network) {
     if (!ChainBridgeChainId.hasOwnProperty(network.toLowerCase())) {
         throw new Error('Network does not exist.')
     }
@@ -265,7 +265,7 @@ async function chainbridgeEvmReceiveConfirm(network, originChainId, depositNonce
 }
 
 module.exports = {
-    getChainbridgeChainid,
+    chainbridgeChainid,
     chainbridgeSendCount,
     chainbridgeReceiveCount,
     chainbridgeEvmSendHistory,

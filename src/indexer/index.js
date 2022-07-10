@@ -1,5 +1,5 @@
 const {
-    getChainbridgeChainid,
+    chainbridgeChainid,
     chainbridgeSendCount,
     chainbridgeReceiveCount,
     chainbridgeEvmSendHistory,
@@ -12,7 +12,7 @@ const {
 } = require('./chainbridge')
 
 module.exports = {
-    getChainbridgeChainid,
+    chainbridgeChainid,
     chainbridgeSendCount,
     chainbridgeReceiveCount,
     chainbridgeEvmSendHistory,
