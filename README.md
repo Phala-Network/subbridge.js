@@ -1,10 +1,8 @@
 <p style="text-align: center;">
-  <img src="http://www.w3.org/2000/svg" width="508" alt="subbridge.js">
+  <img src="https://subbridge.io/favicon.svg" width="508" alt="subbridge.js">
 </p>
 
 # subbridge.js - SubBridge JavaScript SDK
-
-[![NPM Package Version][npm-image-version]][npm-url][![Build Status][actions-image]][actions-url] [![Dev Dependency Status][deps-dev-image]][deps-dev-url]
 
 ## Installation
 
