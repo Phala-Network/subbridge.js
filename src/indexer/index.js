@@ -11,6 +11,17 @@ const {
     chainbridgeEvmReceiveConfirm,
 } = require('./chainbridge')
 
+const { 
+    paraSendCount,
+    paraSendHistory,
+    paraLimittedSendHistory,
+    paraRangeSendHistory,
+    paraReceiveHistory,
+    paraLimittedReceiveHistory,
+    paraRangeReceiveHistory
+} = require('./para')
+
+
 module.exports = {
     chainbridgeChainid,
     chainbridgeSendCount,
@@ -22,4 +33,12 @@ module.exports = {
     chainbridgeEvmLimittedReceivedHistory,
     chainbridgeEvmRangeReceivedHistory,
     chainbridgeEvmReceiveConfirm,
+
+    paraSendCount,
+    paraSendHistory,
+    paraLimittedSendHistory,
+    paraRangeSendHistory,
+    paraReceiveHistory,
+    paraLimittedReceiveHistory,
+    paraRangeReceiveHistory
 }
