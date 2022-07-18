@@ -171,9 +171,61 @@ async function paraRangeSendHistory(network, sender, from, to) {
     }
 }
 
+async function paraReceiveCount(network, recipient) {
+    if (network.toLowerCase() === 'thala') {
+        let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
+        let data;
+        try {
+            data = await client.request(gql`
+            {
+                recevingCounts (filter: {id: {equalTo: \"${recipient.toLowerCase()}\"}}) {
+                    nodes {
+                        id
+                        count
+                    }
+                }
+            }
+            `);
+        } catch (e) {
+            throw new Error(
+                'Error getting recevingCounts from blockchain: ' +
+                JSON.stringify(e) +
+                JSON.stringify(data)
+            );
+        }
+        return data.recevingCounts.nodes[0];
+    } else {
+        throw new Error('Unsupported network');
+    }
+}
+
 async function paraReceiveHistory(network, recipient) {
     if (network.toLowerCase() === 'thala') {
-
+        let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
+        let data;
+        try {
+            data = await client.request(gql`
+            {
+                xTransferDepositeds (filter: {isLocal: {equalTo: true}, account: {equalTo: \"${recipient.toLowerCase()}\"}}) {
+                    nodes {
+                        id
+                        createdAt
+                        asset,
+                        amount,
+                        account,
+                        index
+                    }
+                }
+            }
+            `);
+        } catch (e) {
+            throw new Error(
+              'Error getting xTransferDepositeds from blockchain: ' +
+                JSON.stringify(e) +
+                JSON.stringify(data)
+            );
+        }
+        return data.xTransferDepositeds.nodes;
     } else {
         throw new Error('Unsupported network');
     }
@@ -181,7 +233,31 @@ async function paraReceiveHistory(network, recipient) {
 
 async function paraLimittedReceiveHistory(network, recipient, limit) {
     if (network.toLowerCase() === 'thala') {
-
+        let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
+        let data;
+        try {
+            data = await client.request(gql`
+            {
+                xTransferDepositeds (first: ${limit}, orderBy: CREATED_AT_DESC, filter: {isLocal: {equalTo: true}, account: {equalTo: \"${recipient.toLowerCase()}\"}}) {
+                    nodes {
+                        id
+                        createdAt
+                        asset,
+                        amount,
+                        account,
+                        index
+                    }
+                }
+            }
+            `);
+        } catch (e) {
+            throw new Error(
+              'Error getting xTransferSents from blockchain: ' +
+                JSON.stringify(e) +
+                JSON.stringify(data)
+            );
+        }
+        return data.xTransferSents.nodes;
     } else {
         throw new Error('Unsupported network');
     }
@@ -189,7 +265,31 @@ async function paraLimittedReceiveHistory(network, recipient, limit) {
 
 async function paraRangeReceiveHistory(network, recipient, from, to) {
     if (network.toLowerCase() === 'thala') {
-
+        let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
+        let data;
+        try {
+            data = await client.request(gql`
+            {
+                xTransferDepositeds (orderBy: CREATED_AT_DESC, filter: {account: {equalTo: \"${sender.toLowerCase()}\"}, index: {greaterThanOrEqualTo: ${Number(from)}, lessThanOrEqualTo:${Number(to)}}}) {
+                    nodes {
+                        id
+                        createdAt
+                        asset,
+                        amount,
+                        account,
+                        index
+                    }
+                }
+            }
+            `);
+        } catch (e) {
+            throw new Error(
+              'Error getting xTransferSents from blockchain: ' +
+                JSON.stringify(e) +
+                JSON.stringify(data)
+            );
+        }
+        return data.xTransferSents.nodes;
     } else {
         throw new Error('Unsupported network');
     }
@@ -200,6 +300,7 @@ module.exports = {
     paraSendHistory,
     paraLimittedSendHistory,
     paraRangeSendHistory,
+    paraReceiveCount,
     paraReceiveHistory,
     paraLimittedReceiveHistory,
     paraRangeReceiveHistory

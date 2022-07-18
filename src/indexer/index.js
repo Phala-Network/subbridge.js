@@ -16,6 +16,7 @@ const {
     paraSendHistory,
     paraLimittedSendHistory,
     paraRangeSendHistory,
+    paraReceiveCount,
     paraReceiveHistory,
     paraLimittedReceiveHistory,
     paraRangeReceiveHistory
@@ -38,6 +39,7 @@ module.exports = {
     paraSendHistory,
     paraLimittedSendHistory,
     paraRangeSendHistory,
+    paraReceiveCount,
     paraReceiveHistory,
     paraLimittedReceiveHistory,
     paraRangeReceiveHistory
