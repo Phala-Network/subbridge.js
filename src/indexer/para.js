@@ -295,6 +295,37 @@ async function paraRangeReceiveHistory(network, recipient, from, to) {
     }
 }
 
+async function chainbridgeSubReceiveConfirm(network, originChainId, depositNonce) {
+    let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
+    let data;
+    try {
+        data = await client.request(gql`
+        {
+            cTxReceiveds (orderBy: CREATED_AT_DESC, filter: {originChainId: {equalTo: ${originChainId}}, depositNonce: {equalTo: \"${depositNonce}\"}}) {
+                nodes {
+                    id
+                    createdAt
+                    originChainId
+                    depositNonce
+                    resourceId
+                    status
+                    executeTx {
+                        hash
+                    }
+                }
+            }
+        }
+        `);
+    } catch (e) {
+        throw new Error(
+          "Error getting cTxReceiveds from blockchain: " +
+            JSON.stringify(e) +
+            JSON.stringify(data)
+        );
+    }
+    return data.cTxReceiveds;
+}
+
 module.exports = {
     paraSendCount,
     paraSendHistory,

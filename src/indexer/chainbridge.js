@@ -256,7 +256,7 @@ async function chainbridgeEvmReceiveConfirm(network, originChainId, depositNonce
         `);
     } catch (e) {
         throw new Error(
-          "Error getting ctxSents from blockchain: " +
+          "Error getting ctxReceiveds from blockchain: " +
             JSON.stringify(e) +
             JSON.stringify(data)
         );
