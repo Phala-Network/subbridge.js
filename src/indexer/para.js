@@ -210,9 +210,9 @@ async function paraReceiveHistory(network, recipient) {
                     nodes {
                         id
                         createdAt
-                        asset,
-                        amount,
-                        account,
+                        asset
+                        amount
+                        account
                         index
                     }
                 }
@@ -242,9 +242,9 @@ async function paraLimittedReceiveHistory(network, recipient, limit) {
                     nodes {
                         id
                         createdAt
-                        asset,
-                        amount,
-                        account,
+                        asset
+                        amount
+                        account
                         index
                     }
                 }
@@ -252,12 +252,12 @@ async function paraLimittedReceiveHistory(network, recipient, limit) {
             `);
         } catch (e) {
             throw new Error(
-              'Error getting xTransferSents from blockchain: ' +
+              'Error getting xTransferDepositeds from blockchain: ' +
                 JSON.stringify(e) +
                 JSON.stringify(data)
             );
         }
-        return data.xTransferSents.nodes;
+        return data.xTransferDepositeds.nodes;
     } else {
         throw new Error('Unsupported network');
     }
@@ -270,13 +270,13 @@ async function paraRangeReceiveHistory(network, recipient, from, to) {
         try {
             data = await client.request(gql`
             {
-                xTransferDepositeds (orderBy: CREATED_AT_DESC, filter: {account: {equalTo: \"${sender.toLowerCase()}\"}, index: {greaterThanOrEqualTo: ${Number(from)}, lessThanOrEqualTo:${Number(to)}}}) {
+                xTransferDepositeds (orderBy: CREATED_AT_DESC, filter: {isLocal: {equalTo: true}, account: {equalTo: \"${recipient.toLowerCase()}\"}, index: {greaterThanOrEqualTo: ${Number(from)}, lessThanOrEqualTo:${Number(to)}}}) {
                     nodes {
                         id
                         createdAt
-                        asset,
-                        amount,
-                        account,
+                        asset
+                        amount
+                        account
                         index
                     }
                 }
@@ -284,18 +284,18 @@ async function paraRangeReceiveHistory(network, recipient, from, to) {
             `);
         } catch (e) {
             throw new Error(
-              'Error getting xTransferSents from blockchain: ' +
+              'Error getting xTransferDepositeds from blockchain: ' +
                 JSON.stringify(e) +
                 JSON.stringify(data)
             );
         }
-        return data.xTransferSents.nodes;
+        return data.xTransferDepositeds.nodes;
     } else {
         throw new Error('Unsupported network');
     }
 }
 
-async function chainbridgeSubReceiveConfirm(network, originChainId, depositNonce) {
+async function paraChainbridgeReceiveConfirm(network, originChainId, depositNonce) {
     let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
     let data;
     try {
@@ -334,5 +334,6 @@ module.exports = {
     paraReceiveCount,
     paraReceiveHistory,
     paraLimittedReceiveHistory,
-    paraRangeReceiveHistory
+    paraRangeReceiveHistory,
+    paraChainbridgeReceiveConfirm
 }

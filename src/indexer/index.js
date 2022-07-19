@@ -19,7 +19,8 @@ const {
     paraReceiveCount,
     paraReceiveHistory,
     paraLimittedReceiveHistory,
-    paraRangeReceiveHistory
+    paraRangeReceiveHistory,
+    paraChainbridgeReceiveConfirm
 } = require('./para')
 
 
@@ -42,5 +43,6 @@ module.exports = {
     paraReceiveCount,
     paraReceiveHistory,
     paraLimittedReceiveHistory,
-    paraRangeReceiveHistory
+    paraRangeReceiveHistory,
+    paraChainbridgeReceiveConfirm
 }
