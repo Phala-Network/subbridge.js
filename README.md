@@ -1,5 +1,7 @@
 # subbridge.js - SubBridge JavaScript SDK
 
+## **❗️Work in progress, DO NOT USE❗️**
+
 ## Getting started
 
 ### Install
