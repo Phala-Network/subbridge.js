@@ -20,9 +20,9 @@
 
 ### Usage
 
-- Use **Transaction** issue crosschain transaction
+- Issue crosschain transaction with **Transaction** 
 
-- Use **Indexer** query crosschain transaction histtory
+- Query crosschain transaction history with **Indexer**
 
     ```typescript
     const { ParaIndexer } = require(`subbridge.js`);
