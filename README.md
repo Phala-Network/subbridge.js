@@ -1,28 +1,42 @@
 # subbridge.js - SubBridge JavaScript SDK
 
-## Installation
+## Getting started
 
-### Node
+### Install
 
-```bash
-yarn add subbridge.js
-```
+- Install by yarn,
 
-### In the Browser
+    ```bash
+    yarn add subbridge.js
+    ```
 
-Use prebuilt target `dist/subbridge.min.js`, or build from source code:
+- Or use prebuilt target `dist/subbridge.min.js` in browser,
 
-```bash
-yarn build
-```
+- Or build from source code,
 
-## Usage
+    ```bash
+    yarn build
+    ```
 
-```js
-// In Node.js
-const SubBridge = require(`subbridge.js`);
-```
+### Usage
+
+- Use **Transaction** issue crosschain transaction
+
+- Use **Indexer** query crosschain transaction histtory
+
+    ```typescript
+    const { ParaIndexer } = require(`subbridge.js`);
+    const { Keyring } = require('@polkadot/api');
+
+    const account = keyring.addFromUri('//Alice');
+    const paraIndexer = new ParaIndexer(account.publicKey);
+
+    // Query all sending history issued from Khala network
+    const history = await paraIndexer.sendingHistory();
+
+    // You should then get the history list from our indexing service
+    ```
 
 ## API
 
-Head to [APIs](./API.md) see all the API list current supported.
+Head to [APIs](./API.md) see all the API list currently supported.
