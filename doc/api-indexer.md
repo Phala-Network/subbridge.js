@@ -13,29 +13,29 @@ abstract class Indexer {
      */
     public account: string;
 
-    abstract sendingCount(): number;
-    abstract sendingHistory(): SendingHistory;
-    abstract limittedSendingHistory(limit: number): SendingHistory;
-    abstract rangeSendingHistory(limit: number): SendingHistory;
+    abstract sendingCount(): Promise<number>;
+    abstract sendingHistory(): Promise<SendingHistory>;
+    abstract limittedSendingHistory(limit: number): Promise<SendingHistory>;
+    abstract rangeSendingHistory(limit: number): Promise<SendingHistory>;
 
-    abstract recevingCount(): number;
-    abstract RecevingHistory(): SendingHistory;
-    abstract limittedRecevingHistory(limit: number): SendingHistory;
-    abstract rangeRecevingHistory(limit: number): SendingHistory;
+    abstract recevingCount(): Promise<number>;
+    abstract RecevingHistory(): Promise<RecevingHistory>;
+    abstract limittedRecevingHistory(limit: number): Promise<RecevingHistory>;
+    abstract rangeRecevingHistory(limit: number): Promise<RecevingHistory>;
 }
 ```
 
 ## MultiAsset & MultiLocation
 
-Both `MultiAsset` and `MultiLocation` are defined in [@polkadot.js/types]()
+Head to **@polkadot.js/types** see the definition of [MultiAsset](https://github.com/polkadot-js/api/blob/a2ff40f735aadcc2733e9b926f564abe4e652c96/packages/types/src/interfaces/xcm/types.ts#L346) and [MultiLocation](https://github.com/polkadot-js/api/blob/a2ff40f735aadcc2733e9b926f564abe4e652c96/packages/types/src/interfaces/xcm/types.ts#L419).
 
 ## Tx
 
 ```typescript
 
 interface Tx {
-    sender: string;
-    hash: string;
+    readonly sender: string;
+    readonly hash: string;
 }
 ```
 
@@ -43,15 +43,15 @@ interface Tx {
 
 ```typescript
 interface Count {
-    account: string;
-    count: string;
+    readonly account: string;
+    readonly count: string;
 }
 ```
 
 ## Crosschain transaction status
 
 ```typescript
-interface Status {
+enum Status {
     Sent,
     Forwarded,
     Confirmed,
@@ -63,34 +63,34 @@ interface Status {
 
 ```typescript
 interface SendingHistory {
-    createdAt: string;
-    isXcm: boolean;
-    xcmSendingData?: XCMSendingData;
-    isChainbridge: boolean;
-    chainbridge?: ChainbridgeSendingData;
-    status: string;
+    readonly createdAt: string;
+    readonly isXcm: boolean;
+    readonly xcmSendingData?: XCMSendingData;
+    readonly isChainbridge: boolean;
+    readonly chainbridgeSendingData?: ChainbridgeSendingData;
+    readonly status: string;
 }
 
 interface XCMSendingData {
-    id: string;
-    asset: MultiAsset;
-    recipient: string;
-    amount: string;
-    index: number;
-    sendTx: Tx;
-    sender: string;
+    readonly id: string;
+    readonly asset: MultiAsset;
+    readonly recipient: string;
+    readonly amount: string;
+    readonly index: number;
+    readonly sendTx: Tx;
+    readonly sender: string;
 }
 
 interface ChainbridgeSendingData {
-    id: string;
-    destChainId: number;
-    depositNonce: number;
-    resourceId: string;
-    amount: string;
-    recipient: string;
-    index: number;
-    sendTx: Tx;
-    sender: string;
+    readonly id: string;
+    readonly destChainId: number;
+    readonly depositNonce: number;
+    readonly resourceId: string;
+    readonly amount: string;
+    readonly recipient: string;
+    readonly index: number;
+    readonly sendTx: Tx;
+    readonly sender: string;
 }
 ```
 
@@ -98,31 +98,31 @@ interface ChainbridgeSendingData {
 
 ```typescript
 interface RecevingHistory {
-    createdAt: string;
-    isXcm: boolean;
-    xcmSendingData?: XCMRecevingData;
-    isChainbridge: boolean;
-    chainbridge?: ChainbridgeRecevingData;
+    readonly createdAt: string;
+    readonly isXcm: boolean;
+    readonly xcmSendingData?: XCMRecevingData;
+    readonly isChainbridge: boolean;
+    readonly chainbridgeRecevingData?: ChainbridgeRecevingData;
 }
 
 interface XCMRecevingData {
-    id: string;
-    asset: MultiAsset;
-    amount: string;
-    account: string;
-    index: number;
+    readonly id: string;
+    readonly asset: MultiAsset;
+    readonly amount: string;
+    readonly account: string;
+    readonly index: number;
 }
 
 interface ChainbridgeRecevingData {
-    id: string;
-    asset: MultiAsset;
-    amount: string;
-    account: string;
-    index: number;
-    originChainId: number;
-    depositNonce: number;
-    resourceId: string;
-    status: string;
-    executeTx: Tx;
+    readonly id: string;
+    readonly asset: MultiAsset;
+    readonly amount: string;
+    readonly account: string;
+    readonly index: number;
+    readonly originChainId: number;
+    readonly depositNonce: number;
+    readonly resourceId: string;
+    readonly status: string;
+    readonly executeTx: Tx;
 }
 ```
