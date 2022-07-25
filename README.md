@@ -25,7 +25,7 @@
 - Query crosschain transaction history with **Indexer**
 
     ```typescript
-    const { ParaIndexer } = require(`subbridge.js`);
+    const { ParaIndexer } = require('subbridge.js');
     const { Keyring } = require('@polkadot/api');
 
     const account = keyring.addFromUri('//Alice');
