@@ -1,63 +1,74 @@
-const { gql, GraphQLClient } = require('graphql-request');
-const { ChainId: ChainBridgeChainId } = require('../chainbridge');
-const GraphEndpoint = require('../graph.default');
+import {gql, GraphQLClient} from 'graphql-request'
+import {ChainId as ChainBridgeChainId} from '../chainbridge'
+import GraphEndpoint from '../graph.default'
 
-function chainbridgeChainid(network) {
-    if (!ChainBridgeChainId.hasOwnProperty(network.toLowerCase())) {
-        throw new Error('Network does not exist.')
-    }
-    return ChainBridgeChainId[network.toLowerCase()];
+export function chainbridgeChainid(network) {
+  if (
+    !Object.prototype.hasOwnProperty.call(
+      ChainBridgeChainId,
+      network.toLowerCase()
+    )
+  ) {
+    throw new Error('Network does not exist.')
+  }
+  return ChainBridgeChainId[network.toLowerCase()]
 }
 
-async function chainbridgeSendCount(network, sender) {
-    let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
-    let data;
-    try {
-        data = await client.request(gql`
+export async function chainbridgeSendCount(network, sender) {
+  const client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], {
+    timeout: 300000,
+  })
+  let data
+  try {
+    data = await client.request(gql`
         {
             sendingCounts (where: {id: \"${sender.toLowerCase()}\"}) {
                 id
                 count
             }
         }
-        `);
-    } catch (e) {
-        throw new Error(
-          'Error getting ctxSents from blockchain: ' +
-            JSON.stringify(e) +
-            JSON.stringify(data)
-        );
-    }
-    return data.sendingCounts;
+        `)
+  } catch (e) {
+    throw new Error(
+      'Error getting ctxSents from blockchain: ' +
+        JSON.stringify(e) +
+        JSON.stringify(data)
+    )
+  }
+  return data.sendingCounts
 }
 
-async function chainbridgeReceiveCount(network, recipient) {
-    let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
-    let data;
-    try {
-        data = await client.request(gql`
+export async function chainbridgeReceiveCount(network, recipient) {
+  const client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], {
+    timeout: 300000,
+  })
+  let data
+  try {
+    data = await client.request(gql`
         {
             recevingCounts (where: {id: \"${recipient.toLowerCase()}\"}) {
                 id
                 count
             }
         }
-        `);
-    } catch (e) {
-        throw new Error(
-          'Error getting ctxSents from blockchain: ' +
-            JSON.stringify(e) +
-            JSON.stringify(data)
-        );
-    }
-    return data.recevingCounts;
+        `)
+  } catch (e) {
+    throw new Error(
+      'Error getting ctxSents from blockchain: ' +
+        JSON.stringify(e) +
+        JSON.stringify(data)
+    )
+  }
+  return data.recevingCounts
 }
 
-async function chainbridgeEvmSendHistory(network, sender) {
-    let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
-    let data;
-    try {
-        data = await client.request(gql`
+export async function chainbridgeEvmSendHistory(network, sender) {
+  const client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], {
+    timeout: 300000,
+  })
+  let data
+  try {
+    data = await client.request(gql`
         {
             ctxSents (orderBy: createdAt, orderDirection: desc, where: {sender: \"${sender.toLowerCase()}\"}) {
                 id
@@ -74,22 +85,28 @@ async function chainbridgeEvmSendHistory(network, sender) {
                 index
             }
         }
-        `);
-    } catch (e) {
-        throw new Error(
-          'Error getting ctxSents from blockchain: ' +
-            JSON.stringify(e) +
-            JSON.stringify(data)
-        );
-    }
-    return data.ctxSents;
+        `)
+  } catch (e) {
+    throw new Error(
+      'Error getting ctxSents from blockchain: ' +
+        JSON.stringify(e) +
+        JSON.stringify(data)
+    )
+  }
+  return data.ctxSents
 }
 
-async function chainbridgeEvmLimittedSendHistory(network, sender, count) {
-    let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
-    let data;
-    try {
-        data = await client.request(gql`
+export async function chainbridgeEvmLimittedSendHistory(
+  network,
+  sender,
+  count
+) {
+  const client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], {
+    timeout: 300000,
+  })
+  let data
+  try {
+    data = await client.request(gql`
         {
             ctxSents (first: ${count}, orderBy: createdAt, orderDirection: desc, where: {sender: \"${sender.toLowerCase()}\"}) {
                 id
@@ -106,24 +123,33 @@ async function chainbridgeEvmLimittedSendHistory(network, sender, count) {
                 index
             }
         }
-        `);
-    } catch (e) {
-        throw new Error(
-          'Error getting ctxSents from blockchain: ' +
-            JSON.stringify(e) +
-            JSON.stringify(data)
-        );
-    }
-    return data.ctxSents;
+        `)
+  } catch (e) {
+    throw new Error(
+      'Error getting ctxSents from blockchain: ' +
+        JSON.stringify(e) +
+        JSON.stringify(data)
+    )
+  }
+  return data.ctxSents
 }
 
-async function chainbridgeEvmRangeSendHistory(network, sender, from, to) {
-    let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
-    let data;
-    try {
-        data = await client.request(gql`
+export async function chainbridgeEvmRangeSendHistory(
+  network,
+  sender,
+  from,
+  to
+) {
+  const client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], {
+    timeout: 300000,
+  })
+  let data
+  try {
+    data = await client.request(gql`
         {
-            ctxSents (orderBy: createdAt, orderDirection: desc, where: {sender: \"${sender.toLowerCase()}\", index_gte: ${Number(from)}, index_lte: ${Number(to)}}) {
+            ctxSents (orderBy: createdAt, orderDirection: desc, where: {sender: \"${sender.toLowerCase()}\", index_gte: ${Number(
+      from
+    )}, index_lte: ${Number(to)}}) {
                 id
                 createdAt
                 destChainId
@@ -138,23 +164,25 @@ async function chainbridgeEvmRangeSendHistory(network, sender, from, to) {
                 index
             }
         }
-        `);
-    } catch (e) {
-        throw new Error(
-          'Error getting ctxSents from blockchain: ' +
-            JSON.stringify(e) +
-            JSON.stringify(data)
-        );
-    }
-    return data.ctxSents;
+        `)
+  } catch (e) {
+    throw new Error(
+      'Error getting ctxSents from blockchain: ' +
+        JSON.stringify(e) +
+        JSON.stringify(data)
+    )
+  }
+  return data.ctxSents
 }
 
-async function chainbridgeEvmReceivedHistory(network, recipient) {
-    let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
-    let data;
-    // Retrieve ERC20Deposited records according to recipient
-    try {
-        data = await client.request(gql`
+export async function chainbridgeEvmReceivedHistory(network, recipient) {
+  const client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], {
+    timeout: 300000,
+  })
+  let data
+  // Retrieve ERC20Deposited records according to recipient
+  try {
+    data = await client.request(gql`
         {
             erc20Depositeds (orderBy: createdAt, orderDirection: desc, where: {recipient: \"${recipient.toLowerCase()}\"}) {
                 createdAt
@@ -167,23 +195,29 @@ async function chainbridgeEvmReceivedHistory(network, recipient) {
                 index
             }
         }
-        `);
-    } catch (e) {
-        throw new Error(
-          "Error getting ctxSents from blockchain: " +
-            JSON.stringify(e) +
-            JSON.stringify(data)
-        );
-    }
-    return data.erc20Depositeds;
+        `)
+  } catch (e) {
+    throw new Error(
+      'Error getting ctxSents from blockchain: ' +
+        JSON.stringify(e) +
+        JSON.stringify(data)
+    )
+  }
+  return data.erc20Depositeds
 }
 
-async function chainbridgeEvmLimittedReceivedHistory(network, recipient, count) {
-    let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
-    let data;
-    // Retrieve ERC20Deposited records according to recipient
-    try {
-        data = await client.request(gql`
+export async function chainbridgeEvmLimittedReceivedHistory(
+  network,
+  recipient,
+  count
+) {
+  const client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], {
+    timeout: 300000,
+  })
+  let data
+  // Retrieve ERC20Deposited records according to recipient
+  try {
+    data = await client.request(gql`
         {
             erc20Depositeds (first: ${count}, orderBy: createdAt, orderDirection: desc, where: {recipient: \"${recipient.toLowerCase()}\"}) {
                 createdAt
@@ -196,25 +230,34 @@ async function chainbridgeEvmLimittedReceivedHistory(network, recipient, count) 
                 index
             }
         }
-        `);
-    } catch (e) {
-        throw new Error(
-          "Error getting ctxSents from blockchain: " +
-            JSON.stringify(e) +
-            JSON.stringify(data)
-        );
-    }
-    return data.erc20Depositeds;
+        `)
+  } catch (e) {
+    throw new Error(
+      'Error getting ctxSents from blockchain: ' +
+        JSON.stringify(e) +
+        JSON.stringify(data)
+    )
+  }
+  return data.erc20Depositeds
 }
 
-async function chainbridgeEvmRangeReceivedHistory(network, recipient, from, to) {
-    let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
-    let data;
-    // Retrieve ERC20Deposited records according to recipient
-    try {
-        data = await client.request(gql`
+export async function chainbridgeEvmRangeReceivedHistory(
+  network,
+  recipient,
+  from,
+  to
+) {
+  const client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], {
+    timeout: 300000,
+  })
+  let data
+  // Retrieve ERC20Deposited records according to recipient
+  try {
+    data = await client.request(gql`
         {
-            erc20Depositeds (orderBy: createdAt, orderDirection: desc, where: {recipient: \"${recipient.toLowerCase()}\",  index_gte: ${Number(from)}, index_lte: ${Number(to)}}) {
+            erc20Depositeds (orderBy: createdAt, orderDirection: desc, where: {recipient: \"${recipient.toLowerCase()}\",  index_gte: ${Number(
+      from
+    )}, index_lte: ${Number(to)}}) {
                 createdAt
                 token
                 recipient
@@ -225,22 +268,28 @@ async function chainbridgeEvmRangeReceivedHistory(network, recipient, from, to) 
                 index
             }
         }
-        `);
-    } catch (e) {
-        throw new Error(
-          "Error getting ctxSents from blockchain: " +
-            JSON.stringify(e) +
-            JSON.stringify(data)
-        );
-    }
-    return data.erc20Depositeds;
+        `)
+  } catch (e) {
+    throw new Error(
+      'Error getting ctxSents from blockchain: ' +
+        JSON.stringify(e) +
+        JSON.stringify(data)
+    )
+  }
+  return data.erc20Depositeds
 }
 
-async function chainbridgeEvmReceiveConfirm(network, originChainId, depositNonce) {
-    let client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], { timeout: 300000 });
-    let data;
-    try {
-        data = await client.request(gql`
+export async function chainbridgeEvmReceiveConfirm(
+  network,
+  originChainId,
+  depositNonce
+) {
+  const client = new GraphQLClient(GraphEndpoint[network.toLowerCase()], {
+    timeout: 300000,
+  })
+  let data
+  try {
+    data = await client.request(gql`
         {
             ctxReceiveds (orderBy: createdAt, orderDirection: desc, where: {originChainId: ${originChainId}, depositNonce: \"${depositNonce}\"}) {
                 id
@@ -253,26 +302,13 @@ async function chainbridgeEvmReceiveConfirm(network, originChainId, depositNonce
                 }
             }
         }
-        `);
-    } catch (e) {
-        throw new Error(
-          "Error getting ctxReceiveds from blockchain: " +
-            JSON.stringify(e) +
-            JSON.stringify(data)
-        );
-    }
-    return data.ctxReceiveds;
-}
-
-module.exports = {
-    chainbridgeChainid,
-    chainbridgeSendCount,
-    chainbridgeReceiveCount,
-    chainbridgeEvmSendHistory,
-    chainbridgeEvmLimittedSendHistory,
-    chainbridgeEvmRangeSendHistory,
-    chainbridgeEvmReceivedHistory,
-    chainbridgeEvmLimittedReceivedHistory,
-    chainbridgeEvmRangeReceivedHistory,
-    chainbridgeEvmReceiveConfirm,
+        `)
+  } catch (e) {
+    throw new Error(
+      'Error getting ctxReceiveds from blockchain: ' +
+        JSON.stringify(e) +
+        JSON.stringify(data)
+    )
+  }
+  return data.ctxReceiveds
 }
