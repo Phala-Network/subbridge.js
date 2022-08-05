@@ -1,5 +1,3 @@
-
-
 # Indexer
 
 ## Classes
@@ -8,20 +6,20 @@
 
 ```typescript
 abstract class Indexer {
-    /**
-     * Account value should be either a 32 bytes substrate-compitable public key * or a 20 bytes Ethereum-like account address.
-     */
-    public account: string;
+  /**
+   * Account value should be either a 32 bytes substrate-compitable public key * or a 20 bytes Ethereum-like account address.
+   */
+  public account: string
 
-    abstract sendingCount(): Promise<number>;
-    abstract sendingHistory(): Promise<SendingHistory>;
-    abstract limittedSendingHistory(limit: number): Promise<SendingHistory>;
-    abstract rangeSendingHistory(limit: number): Promise<SendingHistory>;
+  abstract sendingCount(): Promise<number>
+  abstract sendingHistory(): Promise<SendingHistory>
+  abstract limittedSendingHistory(limit: number): Promise<SendingHistory>
+  abstract rangeSendingHistory(limit: number): Promise<SendingHistory>
 
-    abstract recevingCount(): Promise<number>;
-    abstract RecevingHistory(): Promise<RecevingHistory>;
-    abstract limittedRecevingHistory(limit: number): Promise<RecevingHistory>;
-    abstract rangeRecevingHistory(limit: number): Promise<RecevingHistory>;
+  abstract recevingCount(): Promise<number>
+  abstract RecevingHistory(): Promise<RecevingHistory>
+  abstract limittedRecevingHistory(limit: number): Promise<RecevingHistory>
+  abstract rangeRecevingHistory(limit: number): Promise<RecevingHistory>
 }
 ```
 
@@ -32,10 +30,9 @@ Head to **@polkadot.js/types** see the definition of [MultiAsset](https://github
 ## Tx
 
 ```typescript
-
 interface Tx {
-    readonly sender: string;
-    readonly hash: string;
+  readonly sender: string
+  readonly hash: string
 }
 ```
 
@@ -43,8 +40,8 @@ interface Tx {
 
 ```typescript
 interface Count {
-    readonly account: string;
-    readonly count: string;
+  readonly account: string
+  readonly count: string
 }
 ```
 
@@ -52,10 +49,10 @@ interface Count {
 
 ```typescript
 enum Status {
-    Sent,
-    Forwarded,
-    Confirmed,
-    Failed,
+  Sent,
+  Forwarded,
+  Confirmed,
+  Failed,
 }
 ```
 
@@ -63,34 +60,34 @@ enum Status {
 
 ```typescript
 interface SendingHistory {
-    readonly createdAt: string;
-    readonly isXcm: boolean;
-    readonly xcmSendingData?: XCMSendingData;
-    readonly isChainbridge: boolean;
-    readonly chainbridgeSendingData?: ChainbridgeSendingData;
-    readonly status: string;
+  readonly createdAt: string
+  readonly isXcm: boolean
+  readonly xcmSendingData?: XCMSendingData
+  readonly isChainbridge: boolean
+  readonly chainbridgeSendingData?: ChainbridgeSendingData
+  readonly status: string
 }
 
 interface XCMSendingData {
-    readonly id: string;
-    readonly asset: MultiAsset;
-    readonly recipient: string;
-    readonly amount: string;
-    readonly index: number;
-    readonly sendTx: Tx;
-    readonly sender: string;
+  readonly id: string
+  readonly asset: MultiAsset
+  readonly recipient: string
+  readonly amount: string
+  readonly index: number
+  readonly sendTx: Tx
+  readonly sender: string
 }
 
 interface ChainbridgeSendingData {
-    readonly id: string;
-    readonly destChainId: number;
-    readonly depositNonce: number;
-    readonly resourceId: string;
-    readonly amount: string;
-    readonly recipient: string;
-    readonly index: number;
-    readonly sendTx: Tx;
-    readonly sender: string;
+  readonly id: string
+  readonly destChainId: number
+  readonly depositNonce: number
+  readonly resourceId: string
+  readonly amount: string
+  readonly recipient: string
+  readonly index: number
+  readonly sendTx: Tx
+  readonly sender: string
 }
 ```
 
@@ -98,31 +95,31 @@ interface ChainbridgeSendingData {
 
 ```typescript
 interface RecevingHistory {
-    readonly createdAt: string;
-    readonly isXcm: boolean;
-    readonly xcmSendingData?: XCMRecevingData;
-    readonly isChainbridge: boolean;
-    readonly chainbridgeRecevingData?: ChainbridgeRecevingData;
+  readonly createdAt: string
+  readonly isXcm: boolean
+  readonly xcmSendingData?: XCMRecevingData
+  readonly isChainbridge: boolean
+  readonly chainbridgeRecevingData?: ChainbridgeRecevingData
 }
 
 interface XCMRecevingData {
-    readonly id: string;
-    readonly asset: MultiAsset;
-    readonly amount: string;
-    readonly account: string;
-    readonly index: number;
+  readonly id: string
+  readonly asset: MultiAsset
+  readonly amount: string
+  readonly account: string
+  readonly index: number
 }
 
 interface ChainbridgeRecevingData {
-    readonly id: string;
-    readonly asset: MultiAsset;
-    readonly amount: string;
-    readonly account: string;
-    readonly index: number;
-    readonly originChainId: number;
-    readonly depositNonce: number;
-    readonly resourceId: string;
-    readonly status: string;
-    readonly executeTx: Tx;
+  readonly id: string
+  readonly asset: MultiAsset
+  readonly amount: string
+  readonly account: string
+  readonly index: number
+  readonly originChainId: number
+  readonly depositNonce: number
+  readonly resourceId: string
+  readonly status: string
+  readonly executeTx: Tx
 }
 ```
