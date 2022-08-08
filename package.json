@@ -18,8 +18,8 @@
     "Crosschain",
     "Index"
   ],
-  "author": "Wenfeng Wang",
-  "license": "MIT",
+  "author": "Phala Network",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/tolak/subbridge.js/issues"
   },
