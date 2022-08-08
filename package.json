@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/tolak/subbridge.js#readme",
   "dependencies": {
+    "@polkadot/api": "^9.1.1",
     "graphql": "^16.5.0",
     "graphql-request": "^4.3.0"
   },
