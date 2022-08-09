@@ -5,6 +5,16 @@ import {Indexer} from './indexer'
 import {ChainbridgeConfirmData, SendingHistory, RecevingHistory} from './types'
 
 export class ParaIndexer extends Indexer {
+  public client: GraphQLClient
+
+  constructor(account: string, network: string) {
+    super(account, network)
+
+    this.client = new GraphQLClient(GraphEndpoint[this.network], {
+      timeout: 300000,
+    })
+  }
+
   chainbridgeConfirmData(
     destNetwork,
     originChainId,
@@ -12,7 +22,7 @@ export class ParaIndexer extends Indexer {
   ): Promise<ChainbridgeConfirmData> {
     return new Promise<ChainbridgeConfirmData>(async (resolve, reject) => {
       // TODO: verify destNetwork
-      const client = new GraphQLClient(
+      const destClient = new GraphQLClient(
         GraphEndpoint[destNetwork.toLowerCase()],
         {
           timeout: 300000,
@@ -20,7 +30,7 @@ export class ParaIndexer extends Indexer {
       )
       let data
       try {
-        data = await client.request(gql`
+        data = await destClient.request(gql`
                 {
                     cTxReceiveds (orderBy: CREATED_AT_DESC, filter: {originChainId: {equalTo: ${originChainId}}, depositNonce: {equalTo: \"${depositNonce}\"}}) {
                         nodes {
@@ -63,12 +73,9 @@ export class ParaIndexer extends Indexer {
   sendingCount(): Promise<number> {
     return new Promise<number>(async (resolve, reject) => {
       if (this.network === 'thala') {
-        const client = new GraphQLClient(GraphEndpoint[this.network], {
-          timeout: 300000,
-        })
         let data
         try {
-          data = await client.request(gql`
+          data = await this.client.request(gql`
                         {
                             sendingCounts (filter: {id: {equalTo: \"${this.account.toLowerCase()}\"}}) {
                                 nodes {
@@ -97,12 +104,9 @@ export class ParaIndexer extends Indexer {
   sendingHistory(): Promise<SendingHistory> {
     return new Promise<SendingHistory>(async (resolve, reject) => {
       if (this.network === 'thala') {
-        const client = new GraphQLClient(GraphEndpoint[this.network], {
-          timeout: 300000,
-        })
         let data
         try {
-          data = await client.request(gql`
+          data = await this.client.request(gql`
                         {
                             xTransferSents (filter: {sender: {equalTo: \"${this.account.toLowerCase()}\"}}) {
                                 nodes {
@@ -150,12 +154,9 @@ export class ParaIndexer extends Indexer {
   limittedSendingHistory(limit: number): Promise<SendingHistory> {
     return new Promise<SendingHistory>(async (resolve, reject) => {
       if (this.network === 'thala') {
-        const client = new GraphQLClient(GraphEndpoint[this.network], {
-          timeout: 300000,
-        })
         let data
         try {
-          data = await client.request(gql`
+          data = await this.client.request(gql`
                         {
                             xTransferSents (first: ${limit}, orderBy: CREATED_AT_DESC, filter: {sender: {equalTo: \"${this.account.toLowerCase()}\"}}) {
                                 nodes {
@@ -203,12 +204,9 @@ export class ParaIndexer extends Indexer {
   rangeSendingHistory(from: number, to: number): Promise<SendingHistory> {
     return new Promise<SendingHistory>(async (resolve, reject) => {
       if (this.network === 'thala') {
-        const client = new GraphQLClient(GraphEndpoint[this.network], {
-          timeout: 300000,
-        })
         let data
         try {
-          data = await client.request(gql`
+          data = await this.client.request(gql`
                         {
                             xTransferSents (orderBy: CREATED_AT_DESC, filter: {sender: {equalTo: \"${this.account.toLowerCase()}\"}, index: {greaterThanOrEqualTo: ${Number(
             from
@@ -258,12 +256,9 @@ export class ParaIndexer extends Indexer {
   recevingCount(): Promise<number> {
     return new Promise<number>(async (resolve, reject) => {
       if (this.network === 'thala') {
-        const client = new GraphQLClient(GraphEndpoint[this.network], {
-          timeout: 300000,
-        })
         let data
         try {
-          data = await client.request(gql`
+          data = await this.client.request(gql`
                         {
                             recevingCounts (filter: {id: {equalTo: \"${this.account.toLowerCase()}\"}}) {
                                 nodes {
@@ -292,12 +287,9 @@ export class ParaIndexer extends Indexer {
   RecevingHistory(): Promise<RecevingHistory> {
     return new Promise<RecevingHistory>(async (resolve, reject) => {
       if (this.network === 'thala') {
-        const client = new GraphQLClient(GraphEndpoint[this.network], {
-          timeout: 300000,
-        })
         let data
         try {
-          data = await client.request(gql`
+          data = await this.client.request(gql`
                         {
                             xTransferDepositeds (filter: {isLocal: {equalTo: true}, account: {equalTo: \"${this.account.toLowerCase()}\"}}) {
                                 nodes {
@@ -330,12 +322,9 @@ export class ParaIndexer extends Indexer {
   limittedRecevingHistory(limit: number): Promise<RecevingHistory> {
     return new Promise<RecevingHistory>(async (resolve, reject) => {
       if (this.network === 'thala') {
-        const client = new GraphQLClient(GraphEndpoint[this.network], {
-          timeout: 300000,
-        })
         let data
         try {
-          data = await client.request(gql`
+          data = await this.client.request(gql`
                         {
                             xTransferDepositeds (first: ${limit}, orderBy: CREATED_AT_DESC, filter: {isLocal: {equalTo: true}, account: {equalTo: \"${this.account.toLowerCase()}\"}}) {
                                 nodes {
@@ -368,12 +357,9 @@ export class ParaIndexer extends Indexer {
   rangeRecevingHistory(from: number, to: number): Promise<RecevingHistory> {
     return new Promise<RecevingHistory>(async (resolve, reject) => {
       if (this.network === 'thala') {
-        const client = new GraphQLClient(GraphEndpoint[this.network], {
-          timeout: 300000,
-        })
         let data
         try {
-          data = await client.request(gql`
+          data = await this.client.request(gql`
                         {
                             xTransferDepositeds (orderBy: CREATED_AT_DESC, filter: {isLocal: {equalTo: true}, account: {equalTo: \"${this.account.toLowerCase()}\"}, index: {greaterThanOrEqualTo: ${Number(
             from

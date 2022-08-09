@@ -6,6 +6,16 @@ import {Indexer} from './indexer'
 import {ChainbridgeConfirmData, SendingHistory, RecevingHistory} from './types'
 
 export class EvmChainBridgeIndexer extends Indexer {
+  public client: GraphQLClient
+
+  constructor(account: string, network: string) {
+    super(account, network)
+
+    this.client = new GraphQLClient(GraphEndpoint[this.network], {
+      timeout: 300000,
+    })
+  }
+
   chainId(network: string): number {
     if (
       !Object.prototype.hasOwnProperty.call(ChainBridgeChainId, this.network)
@@ -22,7 +32,7 @@ export class EvmChainBridgeIndexer extends Indexer {
   ): Promise<ChainbridgeConfirmData> {
     return new Promise<ChainbridgeConfirmData>(async (resolve, reject) => {
       // TODO: verify destNetwork
-      const client = new GraphQLClient(
+      const destClient = new GraphQLClient(
         GraphEndpoint[destNetwork.toLowerCase()],
         {
           timeout: 300000,
@@ -30,7 +40,7 @@ export class EvmChainBridgeIndexer extends Indexer {
       )
       let data
       try {
-        data = await client.request(gql`
+        data = await destClient.request(gql`
                 {
                     ctxReceiveds (orderBy: createdAt, orderDirection: desc, where: {originChainId: ${originChainId}, depositNonce: \"${depositNonce}\"}) {
                         id
@@ -69,12 +79,9 @@ export class EvmChainBridgeIndexer extends Indexer {
 
   sendingCount(): Promise<number> {
     return new Promise<number>(async (resolve, reject) => {
-      const client = new GraphQLClient(GraphEndpoint[this.network], {
-        timeout: 300000,
-      })
       let data
       try {
-        data = await client.request(gql`
+        data = await this.client.request(gql`
             {
                 sendingCounts (where: {id: \"${this.account.toLowerCase()}\"}) {
                     id
@@ -97,12 +104,9 @@ export class EvmChainBridgeIndexer extends Indexer {
 
   sendingHistory(): Promise<SendingHistory> {
     return new Promise<SendingHistory>(async (resolve, reject) => {
-      const client = new GraphQLClient(GraphEndpoint[this.network], {
-        timeout: 300000,
-      })
       let data
       try {
-        data = await client.request(gql`
+        data = await this.client.request(gql`
                 {
                     ctxSents (orderBy: createdAt, orderDirection: desc, where: {sender: \"${this.account.toLowerCase()}\"}) {
                         id
@@ -135,12 +139,9 @@ export class EvmChainBridgeIndexer extends Indexer {
 
   limittedSendingHistory(limit: number): Promise<SendingHistory> {
     return new Promise<SendingHistory>(async (resolve, reject) => {
-      const client = new GraphQLClient(GraphEndpoint[this.network], {
-        timeout: 300000,
-      })
       let data
       try {
-        data = await client.request(gql`
+        data = await this.client.request(gql`
                 {
                     ctxSents (first: ${limit}, orderBy: createdAt, orderDirection: desc, where: {sender: \"${this.account.toLowerCase()}\"}) {
                         id
@@ -173,12 +174,9 @@ export class EvmChainBridgeIndexer extends Indexer {
 
   rangeSendingHistory(from: number, to: number): Promise<SendingHistory> {
     return new Promise<SendingHistory>(async (resolve, reject) => {
-      const client = new GraphQLClient(GraphEndpoint[this.network], {
-        timeout: 300000,
-      })
       let data
       try {
-        data = await client.request(gql`
+        data = await this.client.request(gql`
                 {
                     ctxSents (orderBy: createdAt, orderDirection: desc, where: {sender: \"${this.account.toLowerCase()}\", index_gte: ${Number(
           from
@@ -213,12 +211,9 @@ export class EvmChainBridgeIndexer extends Indexer {
 
   recevingCount(): Promise<number> {
     return new Promise<number>(async (resolve, reject) => {
-      const client = new GraphQLClient(GraphEndpoint[this.network], {
-        timeout: 300000,
-      })
       let data
       try {
-        data = await client.request(gql`
+        data = await this.client.request(gql`
                 {
                     recevingCounts (where: {id: \"${this.account.toLowerCase()}\"}) {
                         id
@@ -241,13 +236,10 @@ export class EvmChainBridgeIndexer extends Indexer {
 
   RecevingHistory(): Promise<RecevingHistory> {
     return new Promise<RecevingHistory>(async (resolve, reject) => {
-      const client = new GraphQLClient(GraphEndpoint[this.network], {
-        timeout: 300000,
-      })
       let data
       // Retrieve ERC20Deposited records according to recipient
       try {
-        data = await client.request(gql`
+        data = await this.client.request(gql`
                 {
                     erc20Depositeds (orderBy: createdAt, orderDirection: desc, where: {recipient: \"${this.account.toLowerCase()}\"}) {
                         createdAt
@@ -276,13 +268,10 @@ export class EvmChainBridgeIndexer extends Indexer {
 
   limittedRecevingHistory(limit: number): Promise<RecevingHistory> {
     return new Promise<RecevingHistory>(async (resolve, reject) => {
-      const client = new GraphQLClient(GraphEndpoint[this.network], {
-        timeout: 300000,
-      })
       let data
       // Retrieve ERC20Deposited records according to recipient
       try {
-        data = await client.request(gql`
+        data = await this.client.request(gql`
                 {
                     erc20Depositeds (first: ${limit}, orderBy: createdAt, orderDirection: desc, where: {recipient: \"${this.account.toLowerCase()}\"}) {
                         createdAt
@@ -311,13 +300,10 @@ export class EvmChainBridgeIndexer extends Indexer {
 
   rangeRecevingHistory(from: number, to: number): Promise<RecevingHistory> {
     return new Promise<RecevingHistory>(async (resolve, reject) => {
-      const client = new GraphQLClient(GraphEndpoint[this.network], {
-        timeout: 300000,
-      })
       let data
       // Retrieve ERC20Deposited records according to recipient
       try {
-        data = await client.request(gql`
+        data = await this.client.request(gql`
                 {
                     erc20Depositeds (orderBy: createdAt, orderDirection: desc, where: {recipient: \"${this.account.toLowerCase()}\",  index_gte: ${Number(
           from
