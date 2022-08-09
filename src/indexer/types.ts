@@ -80,9 +80,9 @@ export interface ChainbridgeRecevingData {
 }
 
 export interface ChainbridgeConfirmData {
-    readonly id: string
-    readonly originChainId: number
-    readonly depositNonce: number
-    readonly status: string
-    readonly executeTx: Tx
+  readonly id: string
+  readonly originChainId: number
+  readonly depositNonce: number
+  readonly status: string
+  readonly executeTx: Tx
 }
