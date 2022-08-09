@@ -1,5 +1,5 @@
 import {gql, GraphQLClient} from 'graphql-request'
-import GraphEndpoint from '../graph.default'
+import {GraphEndpoint} from '../graph.default'
 
 import {Indexer} from './indexer'
 import {ChainbridgeConfirmData, SendingHistory, RecevingHistory} from './types'
@@ -16,11 +16,11 @@ export class ParaIndexer extends Indexer {
   }
 
   chainbridgeConfirmData(
-    destNetwork,
-    originChainId,
-    depositNonce
+    destNetwork: string,
+    originChainId: number,
+    depositNonce: number
   ): Promise<ChainbridgeConfirmData> {
-    return new Promise<ChainbridgeConfirmData>(async (resolve, reject) => {
+    return new Promise<ChainbridgeConfirmData>((resolve, reject) => {
       // TODO: verify destNetwork
       const destClient = new GraphQLClient(
         GraphEndpoint[destNetwork.toLowerCase()],
@@ -28,9 +28,10 @@ export class ParaIndexer extends Indexer {
           timeout: 300000,
         }
       )
-      let data
-      try {
-        data = await destClient.request(gql`
+
+      destClient
+        .request(
+          gql`
                 {
                     cTxReceiveds (orderBy: CREATED_AT_DESC, filter: {originChainId: {equalTo: ${originChainId}}, depositNonce: {equalTo: \"${depositNonce}\"}}) {
                         nodes {
@@ -46,17 +47,18 @@ export class ParaIndexer extends Indexer {
                         }
                     }
                 }
-                `)
-      } catch (e) {
-        reject(
-          new Error(
-            'Error getting cTxReceiveds from blockchain: ' +
-              JSON.stringify(e) +
-              JSON.stringify(data)
-          )
+                `
         )
-      }
-      resolve(data.cTxReceiveds)
+        .then((data) => {
+          resolve(data.cTxReceiveds)
+        })
+        .catch((e) => {
+          reject(
+            new Error(
+              'Error getting cTxReceiveds from blockchain: ' + JSON.stringify(e)
+            )
+          )
+        })
     })
   }
 
@@ -71,11 +73,11 @@ export class ParaIndexer extends Indexer {
   }
 
   sendingCount(): Promise<number> {
-    return new Promise<number>(async (resolve, reject) => {
+    return new Promise<number>((resolve, reject) => {
       if (this.network === 'thala') {
-        let data
-        try {
-          data = await this.client.request(gql`
+        this.client
+          .request(
+            gql`
                         {
                             sendingCounts (filter: {id: {equalTo: \"${this.account.toLowerCase()}\"}}) {
                                 nodes {
@@ -84,17 +86,19 @@ export class ParaIndexer extends Indexer {
                                 }
                             }
                         }
-                        `)
-        } catch (e) {
-          reject(
-            Error(
-              'Error getting sendingCounts from blockchain: ' +
-                JSON.stringify(e) +
-                JSON.stringify(data)
-            )
+                        `
           )
-        }
-        resolve(data.sendingCounts.nodes[0])
+          .then((data) => {
+            resolve(data.sendingCounts.nodes[0])
+          })
+          .catch((e) => {
+            reject(
+              Error(
+                'Error getting sendingCounts from blockchain: ' +
+                  JSON.stringify(e)
+              )
+            )
+          })
       } else {
         reject(new Error('Unsupported network'))
       }
@@ -102,11 +106,11 @@ export class ParaIndexer extends Indexer {
   }
 
   sendingHistory(): Promise<SendingHistory> {
-    return new Promise<SendingHistory>(async (resolve, reject) => {
+    return new Promise<SendingHistory>((resolve, reject) => {
       if (this.network === 'thala') {
-        let data
-        try {
-          data = await this.client.request(gql`
+        this.client
+          .request(
+            gql`
                         {
                             xTransferSents (filter: {sender: {equalTo: \"${this.account.toLowerCase()}\"}}) {
                                 nodes {
@@ -134,17 +138,19 @@ export class ParaIndexer extends Indexer {
                                 }
                             }
                         }
-                        `)
-        } catch (e) {
-          reject(
-            new Error(
-              'Error getting xTransferSents from blockchain: ' +
-                JSON.stringify(e) +
-                JSON.stringify(data)
-            )
+                        `
           )
-        }
-        resolve(data.xTransferSents.nodes)
+          .then((data) => {
+            resolve(data.xTransferSents.nodes)
+          })
+          .catch((e) => {
+            reject(
+              new Error(
+                'Error getting xTransferSents from blockchain: ' +
+                  JSON.stringify(e)
+              )
+            )
+          })
       } else {
         reject(new Error('Unsupported network'))
       }
@@ -152,11 +158,11 @@ export class ParaIndexer extends Indexer {
   }
 
   limittedSendingHistory(limit: number): Promise<SendingHistory> {
-    return new Promise<SendingHistory>(async (resolve, reject) => {
+    return new Promise<SendingHistory>((resolve, reject) => {
       if (this.network === 'thala') {
-        let data
-        try {
-          data = await this.client.request(gql`
+        this.client
+          .request(
+            gql`
                         {
                             xTransferSents (first: ${limit}, orderBy: CREATED_AT_DESC, filter: {sender: {equalTo: \"${this.account.toLowerCase()}\"}}) {
                                 nodes {
@@ -184,17 +190,19 @@ export class ParaIndexer extends Indexer {
                                 }
                             }
                         }
-                        `)
-        } catch (e) {
-          reject(
-            new Error(
-              'Error getting xTransferSents from blockchain: ' +
-                JSON.stringify(e) +
-                JSON.stringify(data)
-            )
+                        `
           )
-        }
-        resolve(data.xTransferSents.nodes)
+          .then((data) => {
+            resolve(data.xTransferSents.nodes)
+          })
+          .catch((e) => {
+            reject(
+              new Error(
+                'Error getting xTransferSents from blockchain: ' +
+                  JSON.stringify(e)
+              )
+            )
+          })
       } else {
         reject(new Error('Unsupported network'))
       }
@@ -202,15 +210,15 @@ export class ParaIndexer extends Indexer {
   }
 
   rangeSendingHistory(from: number, to: number): Promise<SendingHistory> {
-    return new Promise<SendingHistory>(async (resolve, reject) => {
+    return new Promise<SendingHistory>((resolve, reject) => {
       if (this.network === 'thala') {
-        let data
-        try {
-          data = await this.client.request(gql`
+        this.client
+          .request(
+            gql`
                         {
                             xTransferSents (orderBy: CREATED_AT_DESC, filter: {sender: {equalTo: \"${this.account.toLowerCase()}\"}, index: {greaterThanOrEqualTo: ${Number(
-            from
-          )}, lessThanOrEqualTo:${Number(to)}}}) {
+              from
+            )}, lessThanOrEqualTo:${Number(to)}}}) {
                                 nodes {
                                     id
                                     createdAt
@@ -236,17 +244,19 @@ export class ParaIndexer extends Indexer {
                                 }
                             }
                         }
-                        `)
-        } catch (e) {
-          reject(
-            new Error(
-              'Error getting xTransferSents from blockchain: ' +
-                JSON.stringify(e) +
-                JSON.stringify(data)
-            )
+                        `
           )
-        }
-        resolve(data.xTransferSents.nodes)
+          .then((data) => {
+            resolve(data.xTransferSents.nodes)
+          })
+          .catch((e) => {
+            reject(
+              new Error(
+                'Error getting xTransferSents from blockchain: ' +
+                  JSON.stringify(e)
+              )
+            )
+          })
       } else {
         reject(new Error('Unsupported network'))
       }
@@ -254,11 +264,11 @@ export class ParaIndexer extends Indexer {
   }
 
   recevingCount(): Promise<number> {
-    return new Promise<number>(async (resolve, reject) => {
+    return new Promise<number>((resolve, reject) => {
       if (this.network === 'thala') {
-        let data
-        try {
-          data = await this.client.request(gql`
+        this.client
+          .request(
+            gql`
                         {
                             recevingCounts (filter: {id: {equalTo: \"${this.account.toLowerCase()}\"}}) {
                                 nodes {
@@ -267,17 +277,19 @@ export class ParaIndexer extends Indexer {
                                 }
                             }
                         }
-                        `)
-        } catch (e) {
-          reject(
-            new Error(
-              'Error getting recevingCounts from blockchain: ' +
-                JSON.stringify(e) +
-                JSON.stringify(data)
-            )
+                        `
           )
-        }
-        resolve(data.recevingCounts.nodes[0])
+          .then((data) => {
+            resolve(data.recevingCounts.nodes[0])
+          })
+          .catch((e) => {
+            reject(
+              new Error(
+                'Error getting recevingCounts from blockchain: ' +
+                  JSON.stringify(e)
+              )
+            )
+          })
       } else {
         reject(new Error('Unsupported network'))
       }
@@ -285,11 +297,11 @@ export class ParaIndexer extends Indexer {
   }
 
   RecevingHistory(): Promise<RecevingHistory> {
-    return new Promise<RecevingHistory>(async (resolve, reject) => {
+    return new Promise<RecevingHistory>((resolve, reject) => {
       if (this.network === 'thala') {
-        let data
-        try {
-          data = await this.client.request(gql`
+        this.client
+          .request(
+            gql`
                         {
                             xTransferDepositeds (filter: {isLocal: {equalTo: true}, account: {equalTo: \"${this.account.toLowerCase()}\"}}) {
                                 nodes {
@@ -302,17 +314,19 @@ export class ParaIndexer extends Indexer {
                                 }
                             }
                         }
-                        `)
-        } catch (e) {
-          reject(
-            new Error(
-              'Error getting xTransferDepositeds from blockchain: ' +
-                JSON.stringify(e) +
-                JSON.stringify(data)
-            )
+                        `
           )
-        }
-        resolve(data.xTransferDepositeds.nodes)
+          .then((data) => {
+            resolve(data.xTransferDepositeds.nodes)
+          })
+          .catch((e) => {
+            reject(
+              new Error(
+                'Error getting xTransferDepositeds from blockchain: ' +
+                  JSON.stringify(e)
+              )
+            )
+          })
       } else {
         reject(new Error('Unsupported network'))
       }
@@ -320,11 +334,11 @@ export class ParaIndexer extends Indexer {
   }
 
   limittedRecevingHistory(limit: number): Promise<RecevingHistory> {
-    return new Promise<RecevingHistory>(async (resolve, reject) => {
+    return new Promise<RecevingHistory>((resolve, reject) => {
       if (this.network === 'thala') {
-        let data
-        try {
-          data = await this.client.request(gql`
+        this.client
+          .request(
+            gql`
                         {
                             xTransferDepositeds (first: ${limit}, orderBy: CREATED_AT_DESC, filter: {isLocal: {equalTo: true}, account: {equalTo: \"${this.account.toLowerCase()}\"}}) {
                                 nodes {
@@ -337,17 +351,19 @@ export class ParaIndexer extends Indexer {
                                 }
                             }
                         }
-                        `)
-        } catch (e) {
-          reject(
-            new Error(
-              'Error getting xTransferDepositeds from blockchain: ' +
-                JSON.stringify(e) +
-                JSON.stringify(data)
-            )
+                        `
           )
-        }
-        resolve(data.xTransferDepositeds.nodes)
+          .then((data) => {
+            resolve(data.xTransferDepositeds.nodes)
+          })
+          .catch((e) => {
+            reject(
+              new Error(
+                'Error getting xTransferDepositeds from blockchain: ' +
+                  JSON.stringify(e)
+              )
+            )
+          })
       } else {
         reject(new Error('Unsupported network'))
       }
@@ -355,15 +371,15 @@ export class ParaIndexer extends Indexer {
   }
 
   rangeRecevingHistory(from: number, to: number): Promise<RecevingHistory> {
-    return new Promise<RecevingHistory>(async (resolve, reject) => {
+    return new Promise<RecevingHistory>((resolve, reject) => {
       if (this.network === 'thala') {
-        let data
-        try {
-          data = await this.client.request(gql`
+        this.client
+          .request(
+            gql`
                         {
                             xTransferDepositeds (orderBy: CREATED_AT_DESC, filter: {isLocal: {equalTo: true}, account: {equalTo: \"${this.account.toLowerCase()}\"}, index: {greaterThanOrEqualTo: ${Number(
-            from
-          )}, lessThanOrEqualTo:${Number(to)}}}) {
+              from
+            )}, lessThanOrEqualTo:${Number(to)}}}) {
                                 nodes {
                                     id
                                     createdAt
@@ -374,17 +390,19 @@ export class ParaIndexer extends Indexer {
                                 }
                             }
                         }
-                        `)
-        } catch (e) {
-          reject(
-            new Error(
-              'Error getting xTransferDepositeds from blockchain: ' +
-                JSON.stringify(e) +
-                JSON.stringify(data)
-            )
+                        `
           )
-        }
-        resolve(data.xTransferDepositeds.nodes)
+          .then((data) => {
+            resolve(data.xTransferDepositeds.nodes)
+          })
+          .catch((e) => {
+            reject(
+              new Error(
+                'Error getting xTransferDepositeds from blockchain: ' +
+                  JSON.stringify(e)
+              )
+            )
+          })
       } else {
         reject(new Error('Unsupported network'))
       }

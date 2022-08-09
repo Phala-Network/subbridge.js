@@ -1,6 +1,6 @@
 import {gql, GraphQLClient} from 'graphql-request'
 import {ChainId as ChainBridgeChainId} from '../chainbridge'
-import GraphEndpoint from '../graph.default'
+import {GraphEndpoint} from '../graph.default'
 
 import {Indexer} from './indexer'
 import {ChainbridgeConfirmData, SendingHistory, RecevingHistory} from './types'
@@ -16,7 +16,7 @@ export class EvmChainBridgeIndexer extends Indexer {
     })
   }
 
-  chainId(network: string): number {
+  chainId(): number {
     if (
       !Object.prototype.hasOwnProperty.call(ChainBridgeChainId, this.network)
     ) {
@@ -26,11 +26,11 @@ export class EvmChainBridgeIndexer extends Indexer {
   }
 
   receiveConfirmData(
-    destNetwork,
-    originChainId,
-    depositNonce
+    destNetwork: string,
+    originChainId: number,
+    depositNonce: number
   ): Promise<ChainbridgeConfirmData> {
-    return new Promise<ChainbridgeConfirmData>(async (resolve, reject) => {
+    return new Promise<ChainbridgeConfirmData>((resolve, reject) => {
       // TODO: verify destNetwork
       const destClient = new GraphQLClient(
         GraphEndpoint[destNetwork.toLowerCase()],
@@ -38,9 +38,9 @@ export class EvmChainBridgeIndexer extends Indexer {
           timeout: 300000,
         }
       )
-      let data
-      try {
-        data = await destClient.request(gql`
+      destClient
+        .request(
+          gql`
                 {
                     ctxReceiveds (orderBy: createdAt, orderDirection: desc, where: {originChainId: ${originChainId}, depositNonce: \"${depositNonce}\"}) {
                         id
@@ -53,17 +53,18 @@ export class EvmChainBridgeIndexer extends Indexer {
                         }
                     }
                 }
-                `)
-      } catch (e) {
-        reject(
-          Error(
-            'Error getting ctxReceiveds from blockchain: ' +
-              JSON.stringify(e) +
-              JSON.stringify(data)
-          )
+                `
         )
-      }
-      resolve(data.ctxReceiveds)
+        .then((data) => {
+          resolve(data.ctxReceiveds)
+        })
+        .catch((e) => {
+          reject(
+            Error(
+              'Error getting ctxReceiveds from blockchain: ' + JSON.stringify(e)
+            )
+          )
+        })
     })
   }
 
@@ -78,35 +79,36 @@ export class EvmChainBridgeIndexer extends Indexer {
   }
 
   sendingCount(): Promise<number> {
-    return new Promise<number>(async (resolve, reject) => {
-      let data
-      try {
-        data = await this.client.request(gql`
+    return new Promise<number>((resolve, reject) => {
+      this.client
+        .request(
+          gql`
             {
                 sendingCounts (where: {id: \"${this.account.toLowerCase()}\"}) {
                     id
                     count
                 }
             }
-            `)
-      } catch (e) {
-        reject(
-          new Error(
-            'Error getting ctxSents from blockchain: ' +
-              JSON.stringify(e) +
-              JSON.stringify(data)
-          )
+            `
         )
-      }
-      resolve(data.sendingCounts)
+        .then((data) => {
+          resolve(data.sendingCounts)
+        })
+        .catch((e) => {
+          reject(
+            new Error(
+              'Error getting ctxSents from blockchain: ' + JSON.stringify(e)
+            )
+          )
+        })
     })
   }
 
   sendingHistory(): Promise<SendingHistory> {
-    return new Promise<SendingHistory>(async (resolve, reject) => {
-      let data
-      try {
-        data = await this.client.request(gql`
+    return new Promise<SendingHistory>((resolve, reject) => {
+      this.client
+        .request(
+          gql`
                 {
                     ctxSents (orderBy: createdAt, orderDirection: desc, where: {sender: \"${this.account.toLowerCase()}\"}) {
                         id
@@ -123,25 +125,26 @@ export class EvmChainBridgeIndexer extends Indexer {
                         index
                     }
                 }
-                `)
-      } catch (e) {
-        reject(
-          new Error(
-            'Error getting ctxSents from blockchain: ' +
-              JSON.stringify(e) +
-              JSON.stringify(data)
-          )
+                `
         )
-      }
-      resolve(data.ctxSents)
+        .then((data) => {
+          resolve(data.ctxSents)
+        })
+        .catch((e) => {
+          reject(
+            new Error(
+              'Error getting ctxSents from blockchain: ' + JSON.stringify(e)
+            )
+          )
+        })
     })
   }
 
   limittedSendingHistory(limit: number): Promise<SendingHistory> {
-    return new Promise<SendingHistory>(async (resolve, reject) => {
-      let data
-      try {
-        data = await this.client.request(gql`
+    return new Promise<SendingHistory>((resolve, reject) => {
+      this.client
+        .request(
+          gql`
                 {
                     ctxSents (first: ${limit}, orderBy: createdAt, orderDirection: desc, where: {sender: \"${this.account.toLowerCase()}\"}) {
                         id
@@ -158,29 +161,30 @@ export class EvmChainBridgeIndexer extends Indexer {
                         index
                     }
                 }
-                `)
-      } catch (e) {
-        reject(
-          new Error(
-            'Error getting ctxSents from blockchain: ' +
-              JSON.stringify(e) +
-              JSON.stringify(data)
-          )
+                `
         )
-      }
-      resolve(data.ctxSents)
+        .then((data) => {
+          resolve(data.ctxSents)
+        })
+        .catch((e) => {
+          reject(
+            new Error(
+              'Error getting ctxSents from blockchain: ' + JSON.stringify(e)
+            )
+          )
+        })
     })
   }
 
   rangeSendingHistory(from: number, to: number): Promise<SendingHistory> {
-    return new Promise<SendingHistory>(async (resolve, reject) => {
-      let data
-      try {
-        data = await this.client.request(gql`
+    return new Promise<SendingHistory>((resolve, reject) => {
+      this.client
+        .request(
+          gql`
                 {
                     ctxSents (orderBy: createdAt, orderDirection: desc, where: {sender: \"${this.account.toLowerCase()}\", index_gte: ${Number(
-          from
-        )}, index_lte: ${Number(to)}}) {
+            from
+          )}, index_lte: ${Number(to)}}) {
                         id
                         createdAt
                         destChainId
@@ -195,51 +199,53 @@ export class EvmChainBridgeIndexer extends Indexer {
                         index
                     }
                 }
-                `)
-      } catch (e) {
-        reject(
-          new Error(
-            'Error getting ctxSents from blockchain: ' +
-              JSON.stringify(e) +
-              JSON.stringify(data)
-          )
+                `
         )
-      }
-      resolve(data.ctxSents)
+        .then((data) => {
+          resolve(data.ctxSents)
+        })
+        .catch((e) => {
+          reject(
+            new Error(
+              'Error getting ctxSents from blockchain: ' + JSON.stringify(e)
+            )
+          )
+        })
     })
   }
 
   recevingCount(): Promise<number> {
-    return new Promise<number>(async (resolve, reject) => {
-      let data
-      try {
-        data = await this.client.request(gql`
+    return new Promise<number>((resolve, reject) => {
+      this.client
+        .request(
+          gql`
                 {
                     recevingCounts (where: {id: \"${this.account.toLowerCase()}\"}) {
                         id
                         count
                     }
                 }
-                `)
-      } catch (e) {
-        reject(
-          new Error(
-            'Error getting ctxSents from blockchain: ' +
-              JSON.stringify(e) +
-              JSON.stringify(data)
-          )
+                `
         )
-      }
-      resolve(data.recevingCounts)
+        .then((data) => {
+          resolve(data.recevingCounts)
+        })
+        .catch((e) => {
+          reject(
+            new Error(
+              'Error getting ctxSents from blockchain: ' + JSON.stringify(e)
+            )
+          )
+        })
     })
   }
 
   RecevingHistory(): Promise<RecevingHistory> {
-    return new Promise<RecevingHistory>(async (resolve, reject) => {
-      let data
+    return new Promise<RecevingHistory>((resolve, reject) => {
       // Retrieve ERC20Deposited records according to recipient
-      try {
-        data = await this.client.request(gql`
+      this.client
+        .request(
+          gql`
                 {
                     erc20Depositeds (orderBy: createdAt, orderDirection: desc, where: {recipient: \"${this.account.toLowerCase()}\"}) {
                         createdAt
@@ -252,26 +258,27 @@ export class EvmChainBridgeIndexer extends Indexer {
                         index
                     }
                 }
-                `)
-      } catch (e) {
-        reject(
-          new Error(
-            'Error getting ctxSents from blockchain: ' +
-              JSON.stringify(e) +
-              JSON.stringify(data)
-          )
+                `
         )
-      }
-      resolve(data.erc20Depositeds)
+        .then((data) => {
+          resolve(data.erc20Depositeds)
+        })
+        .catch((e) => {
+          reject(
+            new Error(
+              'Error getting ctxSents from blockchain: ' + JSON.stringify(e)
+            )
+          )
+        })
     })
   }
 
   limittedRecevingHistory(limit: number): Promise<RecevingHistory> {
-    return new Promise<RecevingHistory>(async (resolve, reject) => {
-      let data
+    return new Promise<RecevingHistory>((resolve, reject) => {
       // Retrieve ERC20Deposited records according to recipient
-      try {
-        data = await this.client.request(gql`
+      this.client
+        .request(
+          gql`
                 {
                     erc20Depositeds (first: ${limit}, orderBy: createdAt, orderDirection: desc, where: {recipient: \"${this.account.toLowerCase()}\"}) {
                         createdAt
@@ -284,30 +291,31 @@ export class EvmChainBridgeIndexer extends Indexer {
                         index
                     }
                 }
-                `)
-      } catch (e) {
-        reject(
-          new Error(
-            'Error getting ctxSents from blockchain: ' +
-              JSON.stringify(e) +
-              JSON.stringify(data)
-          )
+                `
         )
-      }
-      resolve(data.erc20Depositeds)
+        .then((data) => {
+          resolve(data.erc20Depositeds)
+        })
+        .catch((e) => {
+          reject(
+            new Error(
+              'Error getting ctxSents from blockchain: ' + JSON.stringify(e)
+            )
+          )
+        })
     })
   }
 
   rangeRecevingHistory(from: number, to: number): Promise<RecevingHistory> {
-    return new Promise<RecevingHistory>(async (resolve, reject) => {
-      let data
+    return new Promise<RecevingHistory>((resolve, reject) => {
       // Retrieve ERC20Deposited records according to recipient
-      try {
-        data = await this.client.request(gql`
+      this.client
+        .request(
+          gql`
                 {
                     erc20Depositeds (orderBy: createdAt, orderDirection: desc, where: {recipient: \"${this.account.toLowerCase()}\",  index_gte: ${Number(
-          from
-        )}, index_lte: ${Number(to)}}) {
+            from
+          )}, index_lte: ${Number(to)}}) {
                         createdAt
                         token
                         recipient
@@ -318,17 +326,18 @@ export class EvmChainBridgeIndexer extends Indexer {
                         index
                     }
                 }
-                `)
-      } catch (e) {
-        reject(
-          new Error(
-            'Error getting ctxSents from blockchain: ' +
-              JSON.stringify(e) +
-              JSON.stringify(data)
-          )
+                `
         )
-      }
-      resolve(data.erc20Depositeds)
+        .then((data) => {
+          resolve(data.erc20Depositeds)
+        })
+        .catch((e) => {
+          reject(
+            new Error(
+              'Error getting ctxSents from blockchain: ' + JSON.stringify(e)
+            )
+          )
+        })
     })
   }
 }
