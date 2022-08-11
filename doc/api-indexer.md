@@ -5,21 +5,33 @@
 ![image ](./img/indexer-class.png)
 
 ```typescript
-abstract class Indexer {
+export abstract class Indexer {
   /**
    * Account value should be either a 32 bytes substrate-compitable public key * or a 20 bytes Ethereum-like account address.
    */
   public account: string
+  public network: string
 
+  constructor(account: string, network: string) {
+  }
+
+  abstract verifyAccount(): boolean
+  abstract verifyNetwork(): boolean
   abstract sendingCount(): Promise<number>
   abstract sendingHistory(): Promise<SendingHistory>
   abstract limittedSendingHistory(limit: number): Promise<SendingHistory>
-  abstract rangeSendingHistory(limit: number): Promise<SendingHistory>
+  abstract rangeSendingHistory(
+    from: number,
+    to: number
+  ): Promise<SendingHistory>
 
   abstract recevingCount(): Promise<number>
-  abstract RecevingHistory(): Promise<RecevingHistory>
+  abstract recevingHistory(): Promise<RecevingHistory>
   abstract limittedRecevingHistory(limit: number): Promise<RecevingHistory>
-  abstract rangeRecevingHistory(limit: number): Promise<RecevingHistory>
+  abstract rangeRecevingHistory(
+    from: number,
+    to: number
+  ): Promise<RecevingHistory>
 }
 ```
 
@@ -110,15 +122,10 @@ interface XCMRecevingData {
   readonly index: number
 }
 
-interface ChainbridgeRecevingData {
+export interface ChainbridgeConfirmData {
   readonly id: string
-  readonly asset: MultiAsset
-  readonly amount: string
-  readonly account: string
-  readonly index: number
   readonly originChainId: number
   readonly depositNonce: number
-  readonly resourceId: string
   readonly status: string
   readonly executeTx: Tx
 }

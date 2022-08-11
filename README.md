@@ -27,18 +27,22 @@
 - Query crosschain transaction history with **Indexer**
 
   ```typescript
-  const {ParaIndexer} = require('subbridge.js')
-  const {Keyring} = require('@polkadot/api')
+	const {Indexer} = require('subbridge.js')
+	const {Keyring} = require('@polkadot/api')
 
-  const account = keyring.addFromUri('//Alice')
-  const paraIndexer = new ParaIndexer(account.publicKey)
+	const account = keyring.addFromUri('//Alice')
+	const paraIndexer = new Indexer.ParaIndexer(
+			// Account public key
+	'0x7804e66ec9eea3d8daf6273ffbe0a8af25a8879cf43f14d0ebbb30941f578242',
+	// Name of parachain network
+	'thala'
+	)
+	// Query all sending history issued from Khala network
+	const history = await paraIndexer.sendingHistory()
 
-  // Query all sending history issued from Khala network
-  const history = await paraIndexer.sendingHistory()
-
-  // You should then get the history list from our indexing service
+	// You should then get the history list from our indexing service
   ```
 
 ## API
 
-Head to [APIs](./API.md) see all the API list currently supported.
+Head to [APIs](./doc/api-indexer.md) see all the API list currently supported.
