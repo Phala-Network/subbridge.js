@@ -240,7 +240,7 @@ export class EvmChainBridgeIndexer extends Indexer {
     })
   }
 
-  RecevingHistory(): Promise<RecevingHistory> {
+  recevingHistory(): Promise<RecevingHistory> {
     return new Promise<RecevingHistory>((resolve, reject) => {
       // Retrieve ERC20Deposited records according to recipient
       this.client

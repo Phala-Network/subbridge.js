@@ -33,17 +33,15 @@ export class ParaIndexer extends Indexer {
         .request(
           gql`
                 {
-                    cTxReceiveds (orderBy: CREATED_AT_DESC, filter: {originChainId: {equalTo: ${originChainId}}, depositNonce: {equalTo: \"${depositNonce}\"}}) {
-                        nodes {
-                            id
-                            createdAt
-                            originChainId
-                            depositNonce
-                            resourceId
-                            status
-                            executeTx {
-                                hash
-                            }
+                    ctxReceiveds (orderBy: createdAt, orderDirection: desc, where: {originChainId: ${originChainId}, depositNonce: \"${depositNonce}\"}) {
+                        id
+                        createdAt
+                        originChainId
+                        depositNonce
+                        resourceId
+                        status
+                        executeTx {
+                            hash
                         }
                     }
                 }
@@ -296,7 +294,7 @@ export class ParaIndexer extends Indexer {
     })
   }
 
-  RecevingHistory(): Promise<RecevingHistory> {
+  recevingHistory(): Promise<RecevingHistory> {
     return new Promise<RecevingHistory>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client

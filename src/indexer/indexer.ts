@@ -26,7 +26,7 @@ export abstract class Indexer {
   ): Promise<SendingHistory>
 
   abstract recevingCount(): Promise<number>
-  abstract RecevingHistory(): Promise<RecevingHistory>
+  abstract recevingHistory(): Promise<RecevingHistory>
   abstract limittedRecevingHistory(limit: number): Promise<RecevingHistory>
   abstract rangeRecevingHistory(
     from: number,
