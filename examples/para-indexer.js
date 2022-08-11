@@ -1,12 +1,11 @@
-import {Indexer} from '../src/index.js'
-import {ChainId as ChainbridgeChainId} from '../src/chainbridge'
+const {Indexer, ChainBridgeChainId} = require('../dist/index.js')
 
 async function main() {
   const paraIndexer = new Indexer.ParaIndexer(
     '0x7804e66ec9eea3d8daf6273ffbe0a8af25a8879cf43f14d0ebbb30941f578242',
     'thala'
   )
-/*
+
   // Thala: Query sending count by sender
   console.log(
     `\n============ Sending count =============\n${JSON.stringify(
@@ -71,13 +70,13 @@ async function main() {
       2
     )}`
   )
-  */
+
   // Para: Query receiving confirmation of a specific incoming transaction
   console.log(
     `\n============ Confirmation of transaction{originChain: thala, destChain: kovan, depositNonce: 9} =============\n${JSON.stringify(
       await paraIndexer.chainbridgeConfirmData(
         'kovan',
-        ChainbridgeChainId['thala'],
+        ChainBridgeChainId.thala,
         9
       ),
       null,

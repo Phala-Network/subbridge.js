@@ -1,5 +1,5 @@
 import {gql, GraphQLClient} from 'graphql-request'
-import {ChainId as ChainBridgeChainId} from '../chainbridge'
+import {ChainBridgeChainId} from '../chainbridge'
 import {GraphEndpoint} from '../graph.default'
 
 import {Indexer} from './indexer'
@@ -42,21 +42,23 @@ export class EvmChainBridgeIndexer extends Indexer {
         .request(
           gql`
                 {
-                    ctxReceiveds (orderBy: createdAt, orderDirection: desc, where: {originChainId: ${originChainId}, depositNonce: \"${depositNonce}\"}) {
-                        id
-                        createdAt
-                        originChainId
-                        depositNonce
-                        status
-                        executeTx {
-                            hash
+                    cTxReceiveds (orderBy: CREATED_AT_DESC, filter: {originChainId: {equalTo: ${originChainId}}, depositNonce: {equalTo: \"${depositNonce}\"}}) {
+                        nodes {
+                            id
+                            createdAt
+                            originChainId
+                            depositNonce
+                            status
+                            executeTx {
+                                hash
+                            }
                         }
                     }
                 }
                 `
         )
         .then((data) => {
-          resolve(data.ctxReceiveds)
+          resolve(data.cTxReceiveds)
         })
         .catch((e) => {
           reject(

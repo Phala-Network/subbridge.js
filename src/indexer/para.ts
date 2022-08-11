@@ -48,12 +48,12 @@ export class ParaIndexer extends Indexer {
                 `
         )
         .then((data) => {
-          resolve(data.cTxReceiveds)
+          resolve(data.ctxReceiveds)
         })
         .catch((e) => {
           reject(
             new Error(
-              'Error getting cTxReceiveds from blockchain: ' + JSON.stringify(e)
+              'Error getting ctxReceiveds from blockchain: ' + JSON.stringify(e)
             )
           )
         })
