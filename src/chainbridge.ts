@@ -1,4 +1,4 @@
-export const ChainId: {[key: string]: number} = {
+export const ChainBridgeChainId: {[key: string]: number} = {
   kovan: 0,
   ethereum: 0,
   khala: 1,
