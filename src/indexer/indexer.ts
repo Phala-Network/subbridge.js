@@ -1,4 +1,4 @@
-import {Count, SendingHistory, RecevingHistory} from './types'
+import {Option, Count, SendingHistory, RecevingHistory} from './types'
 
 export abstract class Indexer {
   /**
@@ -17,7 +17,7 @@ export abstract class Indexer {
 
   abstract verifyAccount(): boolean
   abstract verifyNetwork(): boolean
-  abstract sendingCount(): Promise<Count>
+  abstract sendingCount(): Promise<Option<Count>>
   abstract sendingHistory(): Promise<SendingHistory>
   abstract limittedSendingHistory(limit: number): Promise<SendingHistory>
   abstract rangeSendingHistory(
@@ -25,7 +25,7 @@ export abstract class Indexer {
     to: number
   ): Promise<SendingHistory>
 
-  abstract recevingCount(): Promise<Count>
+  abstract recevingCount(): Promise<Option<Count>>
   abstract recevingHistory(): Promise<RecevingHistory>
   abstract limittedRecevingHistory(limit: number): Promise<RecevingHistory>
   abstract rangeRecevingHistory(

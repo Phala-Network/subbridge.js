@@ -1,5 +1,7 @@
 import {XcmV1MultiAsset} from '@polkadot/types/lookup'
 
+export type Option<T> = T | null
+
 export interface Tx {
   readonly sender: string
   readonly hash: string

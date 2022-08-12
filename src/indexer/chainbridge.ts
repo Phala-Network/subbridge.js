@@ -4,6 +4,7 @@ import {GraphEndpoint} from '../graph.default'
 
 import {Indexer} from './indexer'
 import {
+  Option,
   Count,
   ChainbridgeConfirmData,
   SendingHistory,
@@ -34,8 +35,8 @@ export class EvmChainBridgeIndexer extends Indexer {
     destNetwork: string,
     originChainId: number,
     depositNonce: number
-  ): Promise<ChainbridgeConfirmData> {
-    return new Promise<ChainbridgeConfirmData>((resolve, reject) => {
+  ): Promise<Option<ChainbridgeConfirmData>> {
+    return new Promise<Option<ChainbridgeConfirmData>>((resolve, reject) => {
       // TODO: verify destNetwork
       const destClient = new GraphQLClient(
         GraphEndpoint[destNetwork.toLowerCase()],
@@ -72,7 +73,7 @@ export class EvmChainBridgeIndexer extends Indexer {
               executeTx: data.cTxReceiveds.nodes[0].executeTx,
             })
           } else {
-            reject(new Error('No data found'))
+            resolve(null)
           }
         })
         .catch((e) => {
@@ -95,8 +96,8 @@ export class EvmChainBridgeIndexer extends Indexer {
     return true
   }
 
-  sendingCount(): Promise<Count> {
-    return new Promise<Count>((resolve, reject) => {
+  sendingCount(): Promise<Option<Count>> {
+    return new Promise<Option<Count>>((resolve, reject) => {
       this.client
         .request(
           gql`
@@ -115,7 +116,7 @@ export class EvmChainBridgeIndexer extends Indexer {
               count: data.sendingCounts[0].count,
             })
           } else {
-            reject(new Error('No data found'))
+            resolve(null)
           }
           resolve(data.sendingCounts)
         })
@@ -239,8 +240,8 @@ export class EvmChainBridgeIndexer extends Indexer {
     })
   }
 
-  recevingCount(): Promise<Count> {
-    return new Promise<Count>((resolve, reject) => {
+  recevingCount(): Promise<Option<Count>> {
+    return new Promise<Option<Count>>((resolve, reject) => {
       this.client
         .request(
           gql`
@@ -259,7 +260,7 @@ export class EvmChainBridgeIndexer extends Indexer {
               count: data.recevingCounts[0].count,
             })
           } else {
-            reject(new Error('No data found'))
+            resolve(null)
           }
           resolve(data.recevingCounts)
         })

@@ -2,7 +2,9 @@ import {gql, GraphQLClient} from 'graphql-request'
 import {GraphEndpoint} from '../graph.default'
 
 import {Indexer} from './indexer'
+
 import {
+  Option,
   Count,
   ChainbridgeConfirmData,
   SendingHistory,
@@ -24,8 +26,8 @@ export class ParaIndexer extends Indexer {
     destNetwork: string,
     originChainId: number,
     depositNonce: number
-  ): Promise<ChainbridgeConfirmData> {
-    return new Promise<ChainbridgeConfirmData>((resolve, reject) => {
+  ): Promise<Option<ChainbridgeConfirmData>> {
+    return new Promise<Option<ChainbridgeConfirmData>>((resolve, reject) => {
       // TODO: verify destNetwork
       const destClient = new GraphQLClient(
         GraphEndpoint[destNetwork.toLowerCase()],
@@ -62,7 +64,7 @@ export class ParaIndexer extends Indexer {
               executeTx: data.ctxReceiveds.executeTx,
             })
           } else {
-            reject(new Error('No data found'))
+            resolve(null)
           }
         })
         .catch((e) => {
@@ -85,8 +87,8 @@ export class ParaIndexer extends Indexer {
     return true
   }
 
-  sendingCount(): Promise<Count> {
-    return new Promise<Count>((resolve, reject) => {
+  sendingCount(): Promise<Option<Count>> {
+    return new Promise<Option<Count>>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
@@ -108,7 +110,7 @@ export class ParaIndexer extends Indexer {
                 count: data.sendingCounts.nodes[0].count,
               })
             } else {
-              reject(new Error('No data found'))
+              resolve(null)
             }
           })
           .catch((e) => {
@@ -283,8 +285,8 @@ export class ParaIndexer extends Indexer {
     })
   }
 
-  recevingCount(): Promise<Count> {
-    return new Promise<Count>((resolve, reject) => {
+  recevingCount(): Promise<Option<Count>> {
+    return new Promise<Option<Count>>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
@@ -306,7 +308,7 @@ export class ParaIndexer extends Indexer {
                 count: data.recevingCounts.nodes[0].count,
               })
             } else {
-              reject(new Error('No data found'))
+              resolve(null)
             }
           })
           .catch((e) => {
