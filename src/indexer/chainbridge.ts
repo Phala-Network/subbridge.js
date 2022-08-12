@@ -58,7 +58,17 @@ export class EvmChainBridgeIndexer extends Indexer {
                 `
         )
         .then((data) => {
-          resolve(data.cTxReceiveds)
+          if (data.cTxReceiveds?.length > 0) {
+            resolve({
+              id: data.cTxReceiveds,
+              originChainId: data.cTxReceiveds.originChainId,
+              depositNonce: data.cTxReceiveds.depositNonce,
+              status: data.cTxReceiveds.status,
+              executeTx: data.cTxReceiveds.executeTx,
+            })
+          } else {
+            reject(new Error('No data found'))
+          }
         })
         .catch((e) => {
           reject(

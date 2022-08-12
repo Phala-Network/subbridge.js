@@ -48,7 +48,17 @@ export class ParaIndexer extends Indexer {
                 `
         )
         .then((data) => {
-          resolve(data.ctxReceiveds)
+          if (data.ctxReceiveds?.length > 0) {
+            resolve({
+              id: data.ctxReceiveds,
+              originChainId: data.ctxReceiveds.originChainId,
+              depositNonce: data.ctxReceiveds.depositNonce,
+              status: data.ctxReceiveds.status,
+              executeTx: data.ctxReceiveds.executeTx,
+            })
+          } else {
+            reject(new Error('No data found'))
+          }
         })
         .catch((e) => {
           reject(
