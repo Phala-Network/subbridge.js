@@ -3,7 +3,12 @@ import {ChainBridgeChainId} from '../chainbridge'
 import {GraphEndpoint} from '../graph.default'
 
 import {Indexer} from './indexer'
-import {ChainbridgeConfirmData, SendingHistory, RecevingHistory} from './types'
+import {
+  Count,
+  ChainbridgeConfirmData,
+  SendingHistory,
+  RecevingHistory,
+} from './types'
 
 export class EvmChainBridgeIndexer extends Indexer {
   public client: GraphQLClient
@@ -58,13 +63,13 @@ export class EvmChainBridgeIndexer extends Indexer {
                 `
         )
         .then((data) => {
-          if (data.cTxReceiveds?.length > 0) {
+          if (data.cTxReceiveds?.nodes.length > 0) {
             resolve({
-              id: data.cTxReceiveds,
-              originChainId: data.cTxReceiveds.originChainId,
-              depositNonce: data.cTxReceiveds.depositNonce,
-              status: data.cTxReceiveds.status,
-              executeTx: data.cTxReceiveds.executeTx,
+              id: data.cTxReceiveds.nodes[0],
+              originChainId: data.cTxReceiveds.nodes[0].originChainId,
+              depositNonce: data.cTxReceiveds.nodes[0].depositNonce,
+              status: data.cTxReceiveds.nodes[0].status,
+              executeTx: data.cTxReceiveds.nodes[0].executeTx,
             })
           } else {
             reject(new Error('No data found'))
@@ -90,8 +95,8 @@ export class EvmChainBridgeIndexer extends Indexer {
     return true
   }
 
-  sendingCount(): Promise<number> {
-    return new Promise<number>((resolve, reject) => {
+  sendingCount(): Promise<Count> {
+    return new Promise<Count>((resolve, reject) => {
       this.client
         .request(
           gql`
@@ -104,6 +109,14 @@ export class EvmChainBridgeIndexer extends Indexer {
             `
         )
         .then((data) => {
+          if (data.sendingCounts?.length > 0) {
+            resolve({
+              account: data.sendingCounts[0].id,
+              count: data.sendingCounts[0].count,
+            })
+          } else {
+            reject(new Error('No data found'))
+          }
           resolve(data.sendingCounts)
         })
         .catch((e) => {
@@ -226,8 +239,8 @@ export class EvmChainBridgeIndexer extends Indexer {
     })
   }
 
-  recevingCount(): Promise<number> {
-    return new Promise<number>((resolve, reject) => {
+  recevingCount(): Promise<Count> {
+    return new Promise<Count>((resolve, reject) => {
       this.client
         .request(
           gql`
@@ -240,6 +253,14 @@ export class EvmChainBridgeIndexer extends Indexer {
                 `
         )
         .then((data) => {
+          if (data.recevingCounts?.length > 0) {
+            resolve({
+              account: data.recevingCounts[0].id,
+              count: data.recevingCounts[0].count,
+            })
+          } else {
+            reject(new Error('No data found'))
+          }
           resolve(data.recevingCounts)
         })
         .catch((e) => {

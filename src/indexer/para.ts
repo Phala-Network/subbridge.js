@@ -2,7 +2,12 @@ import {gql, GraphQLClient} from 'graphql-request'
 import {GraphEndpoint} from '../graph.default'
 
 import {Indexer} from './indexer'
-import {ChainbridgeConfirmData, SendingHistory, RecevingHistory} from './types'
+import {
+  Count,
+  ChainbridgeConfirmData,
+  SendingHistory,
+  RecevingHistory,
+} from './types'
 
 export class ParaIndexer extends Indexer {
   public client: GraphQLClient
@@ -80,8 +85,8 @@ export class ParaIndexer extends Indexer {
     return true
   }
 
-  sendingCount(): Promise<number> {
-    return new Promise<number>((resolve, reject) => {
+  sendingCount(): Promise<Count> {
+    return new Promise<Count>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
@@ -97,7 +102,14 @@ export class ParaIndexer extends Indexer {
                         `
           )
           .then((data) => {
-            resolve(data.sendingCounts.nodes[0])
+            if (data.sendingCounts?.nodes.length > 0) {
+              resolve({
+                account: data.sendingCounts.nodes[0].id,
+                count: data.sendingCounts.nodes[0].count,
+              })
+            } else {
+              reject(new Error('No data found'))
+            }
           })
           .catch((e) => {
             reject(
@@ -271,8 +283,8 @@ export class ParaIndexer extends Indexer {
     })
   }
 
-  recevingCount(): Promise<number> {
-    return new Promise<number>((resolve, reject) => {
+  recevingCount(): Promise<Count> {
+    return new Promise<Count>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
@@ -288,7 +300,14 @@ export class ParaIndexer extends Indexer {
                         `
           )
           .then((data) => {
-            resolve(data.recevingCounts.nodes[0])
+            if (data.recevingCounts?.nodes.length > 0) {
+              resolve({
+                account: data.recevingCounts.nodes[0].id,
+                count: data.recevingCounts.nodes[0].count,
+              })
+            } else {
+              reject(new Error('No data found'))
+            }
           })
           .catch((e) => {
             reject(
