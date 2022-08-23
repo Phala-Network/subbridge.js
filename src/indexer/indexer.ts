@@ -18,18 +18,22 @@ export abstract class Indexer {
   abstract verifyAccount(): boolean
   abstract verifyNetwork(): boolean
   abstract sendingCount(): Promise<Option<Count>>
-  abstract sendingHistory(): Promise<SendingHistory>
-  abstract limittedSendingHistory(limit: number): Promise<SendingHistory>
+  abstract sendingHistory(): Promise<Option<SendingHistory[]>>
+  abstract limittedSendingHistory(
+    limit: number
+  ): Promise<Option<SendingHistory[]>>
   abstract rangeSendingHistory(
     from: number,
     to: number
-  ): Promise<SendingHistory>
+  ): Promise<Option<SendingHistory[]>>
 
   abstract recevingCount(): Promise<Option<Count>>
-  abstract recevingHistory(): Promise<RecevingHistory>
-  abstract limittedRecevingHistory(limit: number): Promise<RecevingHistory>
+  abstract recevingHistory(): Promise<Option<RecevingHistory[]>>
+  abstract limittedRecevingHistory(
+    limit: number
+  ): Promise<Option<RecevingHistory[]>>
   abstract rangeRecevingHistory(
     from: number,
     to: number
-  ): Promise<RecevingHistory>
+  ): Promise<Option<RecevingHistory[]>>
 }
