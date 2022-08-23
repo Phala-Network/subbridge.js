@@ -53,7 +53,7 @@ export interface ChainbridgeSendingData {
 export interface RecevingHistory {
   readonly createdAt: string
   readonly isXcm: boolean
-  readonly xcmSendingData?: XCMRecevingData
+  readonly xcmRecevingData?: XCMRecevingData
   readonly isChainbridge: boolean
   readonly chainbridgeRecevingData?: ChainbridgeRecevingData
 }
