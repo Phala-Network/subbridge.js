@@ -2,7 +2,7 @@ const {Indexer, ChainBridgeChainId} = require('../dist/index.js')
 
 async function main() {
   const indexer = new Indexer.EvmChainBridgeIndexer(
-    '0xA29D4E0F035cb50C0d78c8CeBb56Ca292616Ab20',
+    '0xf2c420bab910c0e9c547a4789d9a50dd5a846739',
     'kovan'
   )
   // ChainBridge: Query sender sending count

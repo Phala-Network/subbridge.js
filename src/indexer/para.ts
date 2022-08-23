@@ -10,6 +10,10 @@ import {
   SendingHistory,
   RecevingHistory,
 } from './types'
+import {
+  paraFilterSingleXCMSendingData,
+  paraFilterSingleChainbridgeSendingData,
+} from './utils'
 
 export class ParaIndexer extends Indexer {
   public client: GraphQLClient
@@ -128,8 +132,8 @@ export class ParaIndexer extends Indexer {
     })
   }
 
-  sendingHistory(): Promise<SendingHistory[]> {
-    return new Promise<SendingHistory[]>((resolve, reject) => {
+  sendingHistory(): Promise<Option<SendingHistory[]>> {
+    return new Promise<Option<SendingHistory[]>>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
@@ -148,7 +152,10 @@ export class ParaIndexer extends Indexer {
                                         sender
                                         recipient
                                         amount
-                                        sendTx
+                                        sendTx {
+                                            sender
+                                            hash
+                                        }
                                     }
                                     isChainbridge
                                     chainbridge {
@@ -158,7 +165,10 @@ export class ParaIndexer extends Indexer {
                                         resourceId
                                         recipient
                                         amount
-                                        sendTx
+                                        sendTx {
+                                            sender
+                                            hash
+                                        }
                                     }
                                 }
                             }
@@ -166,7 +176,19 @@ export class ParaIndexer extends Indexer {
                         `
           )
           .then((data) => {
-            resolve(data.xTransferSents.nodes)
+            if (data.xTransferSents.nodes?.length > 0) {
+              resolve(
+                data.xTransferSents.nodes.map((raw: any) => {
+                  if (raw.isXcm === true) {
+                    return paraFilterSingleXCMSendingData(raw)
+                  } else {
+                    return paraFilterSingleChainbridgeSendingData(raw)
+                  }
+                })
+              )
+            } else {
+              resolve(null)
+            }
           })
           .catch((e) => {
             reject(
@@ -182,8 +204,8 @@ export class ParaIndexer extends Indexer {
     })
   }
 
-  limittedSendingHistory(limit: number): Promise<SendingHistory[]> {
-    return new Promise<SendingHistory[]>((resolve, reject) => {
+  limittedSendingHistory(limit: number): Promise<Option<SendingHistory[]>> {
+    return new Promise<Option<SendingHistory[]>>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
@@ -202,7 +224,10 @@ export class ParaIndexer extends Indexer {
                                         sender
                                         recipient
                                         amount
-                                        sendTx
+                                        sendTx {
+                                            sender
+                                            hash
+                                        }
                                     }
                                     isChainbridge
                                     chainbridge {
@@ -212,7 +237,10 @@ export class ParaIndexer extends Indexer {
                                         resourceId
                                         recipient
                                         amount
-                                        sendTx
+                                        sendTx {
+                                            sender
+                                            hash
+                                        }
                                     }
                                 }
                             }
@@ -220,7 +248,19 @@ export class ParaIndexer extends Indexer {
                         `
           )
           .then((data) => {
-            resolve(data.xTransferSents.nodes)
+            if (data.xTransferSents.nodes?.length > 0) {
+              resolve(
+                data.xTransferSents.nodes.map((raw: any) => {
+                  if (raw.isXcm === true) {
+                    return paraFilterSingleXCMSendingData(raw)
+                  } else {
+                    return paraFilterSingleChainbridgeSendingData(raw)
+                  }
+                })
+              )
+            } else {
+              resolve(null)
+            }
           })
           .catch((e) => {
             reject(
@@ -236,8 +276,11 @@ export class ParaIndexer extends Indexer {
     })
   }
 
-  rangeSendingHistory(from: number, to: number): Promise<SendingHistory[]> {
-    return new Promise<SendingHistory[]>((resolve, reject) => {
+  rangeSendingHistory(
+    from: number,
+    to: number
+  ): Promise<Option<SendingHistory[]>> {
+    return new Promise<Option<SendingHistory[]>>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
@@ -258,7 +301,10 @@ export class ParaIndexer extends Indexer {
                                         sender
                                         recipient
                                         amount
-                                        sendTx
+                                        sendTx {
+                                            sender
+                                            hash
+                                        }
                                     }
                                     isChainbridge
                                     chainbridge {
@@ -268,7 +314,10 @@ export class ParaIndexer extends Indexer {
                                         resourceId
                                         recipient
                                         amount
-                                        sendTx
+                                        sendTx {
+                                            sender
+                                            hash
+                                        }
                                     }
                                 }
                             }
@@ -276,7 +325,19 @@ export class ParaIndexer extends Indexer {
                         `
           )
           .then((data) => {
-            resolve(data.xTransferSents.nodes)
+            if (data.xTransferSents.nodes?.length > 0) {
+              resolve(
+                data.xTransferSents.nodes.map((raw: any) => {
+                  if (raw.isXcm === true) {
+                    return paraFilterSingleXCMSendingData(raw)
+                  } else {
+                    return paraFilterSingleChainbridgeSendingData(raw)
+                  }
+                })
+              )
+            } else {
+              resolve(null)
+            }
           })
           .catch((e) => {
             reject(

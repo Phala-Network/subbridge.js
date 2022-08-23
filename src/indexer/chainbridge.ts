@@ -10,6 +10,7 @@ import {
   SendingHistory,
   RecevingHistory,
 } from './types'
+import {chainbridgeFilterBatchChainbridgeSendingData} from './utils'
 
 export class EvmChainBridgeIndexer extends Indexer {
   public client: GraphQLClient
@@ -56,6 +57,7 @@ export class EvmChainBridgeIndexer extends Indexer {
                             depositNonce
                             status
                             executeTx {
+                                sender
                                 hash
                             }
                         }
@@ -118,7 +120,6 @@ export class EvmChainBridgeIndexer extends Indexer {
           } else {
             resolve(null)
           }
-          resolve(data.sendingCounts)
         })
         .catch((e) => {
           reject(
@@ -130,8 +131,8 @@ export class EvmChainBridgeIndexer extends Indexer {
     })
   }
 
-  sendingHistory(): Promise<SendingHistory> {
-    return new Promise<SendingHistory>((resolve, reject) => {
+  sendingHistory(): Promise<Option<SendingHistory[]>> {
+    return new Promise<Option<SendingHistory[]>>((resolve, reject) => {
       this.client
         .request(
           gql`
@@ -145,6 +146,7 @@ export class EvmChainBridgeIndexer extends Indexer {
                         amount
                         recipient
                         sendTx {
+                            sender,
                             hash
                         }
                         sender,
@@ -154,7 +156,11 @@ export class EvmChainBridgeIndexer extends Indexer {
                 `
         )
         .then((data) => {
-          resolve(data.ctxSents)
+          if (data.ctxSents?.length > 0) {
+            resolve(chainbridgeFilterBatchChainbridgeSendingData(data.ctxSents))
+          } else {
+            resolve(null)
+          }
         })
         .catch((e) => {
           reject(
@@ -166,8 +172,8 @@ export class EvmChainBridgeIndexer extends Indexer {
     })
   }
 
-  limittedSendingHistory(limit: number): Promise<SendingHistory> {
-    return new Promise<SendingHistory>((resolve, reject) => {
+  limittedSendingHistory(limit: number): Promise<Option<SendingHistory[]>> {
+    return new Promise<Option<SendingHistory[]>>((resolve, reject) => {
       this.client
         .request(
           gql`
@@ -190,7 +196,11 @@ export class EvmChainBridgeIndexer extends Indexer {
                 `
         )
         .then((data) => {
-          resolve(data.ctxSents)
+          if (data.ctxSents?.length > 0) {
+            resolve(chainbridgeFilterBatchChainbridgeSendingData(data.ctxSents))
+          } else {
+            resolve(null)
+          }
         })
         .catch((e) => {
           reject(
@@ -202,8 +212,11 @@ export class EvmChainBridgeIndexer extends Indexer {
     })
   }
 
-  rangeSendingHistory(from: number, to: number): Promise<SendingHistory> {
-    return new Promise<SendingHistory>((resolve, reject) => {
+  rangeSendingHistory(
+    from: number,
+    to: number
+  ): Promise<Option<SendingHistory[]>> {
+    return new Promise<Option<SendingHistory[]>>((resolve, reject) => {
       this.client
         .request(
           gql`
@@ -228,7 +241,11 @@ export class EvmChainBridgeIndexer extends Indexer {
                 `
         )
         .then((data) => {
-          resolve(data.ctxSents)
+          if (data.ctxSents?.length > 0) {
+            resolve(chainbridgeFilterBatchChainbridgeSendingData(data.ctxSents))
+          } else {
+            resolve(null)
+          }
         })
         .catch((e) => {
           reject(
@@ -262,7 +279,6 @@ export class EvmChainBridgeIndexer extends Indexer {
           } else {
             resolve(null)
           }
-          resolve(data.recevingCounts)
         })
         .catch((e) => {
           reject(
@@ -274,8 +290,8 @@ export class EvmChainBridgeIndexer extends Indexer {
     })
   }
 
-  recevingHistory(): Promise<RecevingHistory> {
-    return new Promise<RecevingHistory>((resolve, reject) => {
+  recevingHistory(): Promise<RecevingHistory[]> {
+    return new Promise<RecevingHistory[]>((resolve, reject) => {
       // Retrieve ERC20Deposited records according to recipient
       this.client
         .request(
@@ -307,8 +323,8 @@ export class EvmChainBridgeIndexer extends Indexer {
     })
   }
 
-  limittedRecevingHistory(limit: number): Promise<RecevingHistory> {
-    return new Promise<RecevingHistory>((resolve, reject) => {
+  limittedRecevingHistory(limit: number): Promise<RecevingHistory[]> {
+    return new Promise<RecevingHistory[]>((resolve, reject) => {
       // Retrieve ERC20Deposited records according to recipient
       this.client
         .request(
@@ -340,8 +356,8 @@ export class EvmChainBridgeIndexer extends Indexer {
     })
   }
 
-  rangeRecevingHistory(from: number, to: number): Promise<RecevingHistory> {
-    return new Promise<RecevingHistory>((resolve, reject) => {
+  rangeRecevingHistory(from: number, to: number): Promise<RecevingHistory[]> {
+    return new Promise<RecevingHistory[]>((resolve, reject) => {
       // Retrieve ERC20Deposited records according to recipient
       this.client
         .request(
