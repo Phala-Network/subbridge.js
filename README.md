@@ -43,6 +43,8 @@
 	// You should then get the history list from our indexing service
   ```
 
+  Head to [example](./examples/) folder see more usage.
+
 ## API
 
 Head to [APIs](./doc/api-indexer.md) see all the API list currently supported.
