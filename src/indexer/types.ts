@@ -56,25 +56,23 @@ export interface RecevingHistory {
   readonly xcmRecevingData?: XCMRecevingData
   readonly isChainbridge: boolean
   readonly chainbridgeRecevingData?: ChainbridgeRecevingData
+  readonly status: string
 }
 
 export interface XCMRecevingData {
   readonly id: string
   readonly asset: XcmV1MultiAsset
   readonly amount: string
-  readonly account: string
+  readonly recipient: string
   readonly index: number
 }
 
 export interface ChainbridgeRecevingData {
   readonly id: string
-  readonly asset: XcmV1MultiAsset
+  readonly token: string
   readonly amount: string
-  readonly account: string
+  readonly recipient: string
   readonly index: number
-  readonly originChainId: number
-  readonly depositNonce: number
-  readonly resourceId: string
   readonly status: string
   readonly executeTx: Tx
 }

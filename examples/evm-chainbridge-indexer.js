@@ -2,7 +2,9 @@ const {Indexer, ChainBridgeChainId} = require('../dist/index.js')
 
 async function main() {
   const indexer = new Indexer.EvmChainBridgeIndexer(
-    '0xf2c420bab910c0e9c547a4789d9a50dd5a846739',
+    // account has receving history: 0xa29d4e0f035cb50c0d78c8cebb56ca292616ab20
+    // account has sending history: 0xf2c420bab910c0e9c547a4789d9a50dd5a846739
+    '0xa29d4e0f035cb50c0d78c8cebb56ca292616ab20',
     'kovan'
   )
   // ChainBridge: Query sender sending count

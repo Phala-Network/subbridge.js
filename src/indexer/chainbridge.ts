@@ -10,7 +10,10 @@ import {
   SendingHistory,
   RecevingHistory,
 } from './types'
-import {chainbridgeFilterBatchChainbridgeSendingData} from './utils'
+import {
+  chainbridgeFilterBatchChainbridgeSendingData,
+  chainbridgeFilterBatchChainbridgeRecevingData,
+} from './utils'
 
 export class EvmChainBridgeIndexer extends Indexer {
   public client: GraphQLClient
@@ -290,19 +293,21 @@ export class EvmChainBridgeIndexer extends Indexer {
     })
   }
 
-  recevingHistory(): Promise<RecevingHistory[]> {
-    return new Promise<RecevingHistory[]>((resolve, reject) => {
+  recevingHistory(): Promise<Option<RecevingHistory[]>> {
+    return new Promise<Option<RecevingHistory[]>>((resolve, reject) => {
       // Retrieve ERC20Deposited records according to recipient
       this.client
         .request(
           gql`
                 {
                     erc20Depositeds (orderBy: createdAt, orderDirection: desc, where: {recipient: \"${this.account.toLowerCase()}\"}) {
+                        id
                         createdAt
                         token
                         recipient
                         amount
                         tx {
+                            sender
                             hash
                         },
                         index
@@ -311,31 +316,42 @@ export class EvmChainBridgeIndexer extends Indexer {
                 `
         )
         .then((data) => {
-          resolve(data.erc20Depositeds)
+          if (data.erc20Depositeds?.length > 0) {
+            resolve(
+              chainbridgeFilterBatchChainbridgeRecevingData(
+                data.erc20Depositeds
+              )
+            )
+          } else {
+            resolve(null)
+          }
         })
         .catch((e) => {
           reject(
             new Error(
-              'Error getting ctxSents from blockchain: ' + JSON.stringify(e)
+              'Error getting erc20Depositeds from blockchain: ' +
+                JSON.stringify(e)
             )
           )
         })
     })
   }
 
-  limittedRecevingHistory(limit: number): Promise<RecevingHistory[]> {
-    return new Promise<RecevingHistory[]>((resolve, reject) => {
+  limittedRecevingHistory(limit: number): Promise<Option<RecevingHistory[]>> {
+    return new Promise<Option<RecevingHistory[]>>((resolve, reject) => {
       // Retrieve ERC20Deposited records according to recipient
       this.client
         .request(
           gql`
                 {
                     erc20Depositeds (first: ${limit}, orderBy: createdAt, orderDirection: desc, where: {recipient: \"${this.account.toLowerCase()}\"}) {
+                        id
                         createdAt
                         token
                         recipient
                         amount
                         tx {
+                            sender
                             hash
                         },
                         index
@@ -344,20 +360,32 @@ export class EvmChainBridgeIndexer extends Indexer {
                 `
         )
         .then((data) => {
-          resolve(data.erc20Depositeds)
+          if (data.erc20Depositeds?.length > 0) {
+            resolve(
+              chainbridgeFilterBatchChainbridgeRecevingData(
+                data.erc20Depositeds
+              )
+            )
+          } else {
+            resolve(null)
+          }
         })
         .catch((e) => {
           reject(
             new Error(
-              'Error getting ctxSents from blockchain: ' + JSON.stringify(e)
+              'Error getting erc20Depositeds from blockchain: ' +
+                JSON.stringify(e)
             )
           )
         })
     })
   }
 
-  rangeRecevingHistory(from: number, to: number): Promise<RecevingHistory[]> {
-    return new Promise<RecevingHistory[]>((resolve, reject) => {
+  rangeRecevingHistory(
+    from: number,
+    to: number
+  ): Promise<Option<RecevingHistory[]>> {
+    return new Promise<Option<RecevingHistory[]>>((resolve, reject) => {
       // Retrieve ERC20Deposited records according to recipient
       this.client
         .request(
@@ -366,11 +394,13 @@ export class EvmChainBridgeIndexer extends Indexer {
                     erc20Depositeds (orderBy: createdAt, orderDirection: desc, where: {recipient: \"${this.account.toLowerCase()}\",  index_gte: ${Number(
             from
           )}, index_lte: ${Number(to)}}) {
+                        id
                         createdAt
                         token
                         recipient
                         amount
                         tx {
+                            sender
                             hash
                         },
                         index
@@ -379,12 +409,21 @@ export class EvmChainBridgeIndexer extends Indexer {
                 `
         )
         .then((data) => {
-          resolve(data.erc20Depositeds)
+          if (data.erc20Depositeds?.length > 0) {
+            resolve(
+              chainbridgeFilterBatchChainbridgeRecevingData(
+                data.erc20Depositeds
+              )
+            )
+          } else {
+            resolve(null)
+          }
         })
         .catch((e) => {
           reject(
             new Error(
-              'Error getting ctxSents from blockchain: ' + JSON.stringify(e)
+              'Error getting erc20Depositeds from blockchain: ' +
+                JSON.stringify(e)
             )
           )
         })

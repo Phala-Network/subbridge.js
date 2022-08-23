@@ -13,6 +13,7 @@ import {
 import {
   paraFilterSingleXCMSendingData,
   paraFilterSingleChainbridgeSendingData,
+  paraFilterSingleXCMRecevingData,
 } from './utils'
 
 export class ParaIndexer extends Indexer {
@@ -393,8 +394,8 @@ export class ParaIndexer extends Indexer {
     })
   }
 
-  recevingHistory(): Promise<RecevingHistory[]> {
-    return new Promise<RecevingHistory[]>((resolve, reject) => {
+  recevingHistory(): Promise<Option<RecevingHistory[]>> {
+    return new Promise<Option<RecevingHistory[]>>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
@@ -406,7 +407,10 @@ export class ParaIndexer extends Indexer {
                                     createdAt
                                     asset
                                     amount
+                                    isLocal
                                     account
+                                    isRemote
+                                    location
                                     index
                                 }
                             }
@@ -414,7 +418,16 @@ export class ParaIndexer extends Indexer {
                         `
           )
           .then((data) => {
-            resolve(data.xTransferDepositeds.nodes)
+            if (data.xTransferDepositeds.nodes?.length > 0) {
+              resolve(
+                data.xTransferDepositeds.nodes.map((raw: any) => {
+                  // For now we just treat all as XCM receving data
+                  return paraFilterSingleXCMRecevingData(raw)
+                })
+              )
+            } else {
+              resolve(null)
+            }
           })
           .catch((e) => {
             reject(
@@ -430,8 +443,8 @@ export class ParaIndexer extends Indexer {
     })
   }
 
-  limittedRecevingHistory(limit: number): Promise<RecevingHistory[]> {
-    return new Promise<RecevingHistory[]>((resolve, reject) => {
+  limittedRecevingHistory(limit: number): Promise<Option<RecevingHistory[]>> {
+    return new Promise<Option<RecevingHistory[]>>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
@@ -443,7 +456,10 @@ export class ParaIndexer extends Indexer {
                                     createdAt
                                     asset
                                     amount
+                                    isLocal
                                     account
+                                    isRemote
+                                    location
                                     index
                                 }
                             }
@@ -451,7 +467,16 @@ export class ParaIndexer extends Indexer {
                         `
           )
           .then((data) => {
-            resolve(data.xTransferDepositeds.nodes)
+            if (data.xTransferDepositeds.nodes?.length > 0) {
+              resolve(
+                data.xTransferDepositeds.nodes.map((raw: any) => {
+                  // For now we just treat all as XCM receving data
+                  return paraFilterSingleXCMRecevingData(raw)
+                })
+              )
+            } else {
+              resolve(null)
+            }
           })
           .catch((e) => {
             reject(
@@ -467,8 +492,11 @@ export class ParaIndexer extends Indexer {
     })
   }
 
-  rangeRecevingHistory(from: number, to: number): Promise<RecevingHistory[]> {
-    return new Promise<RecevingHistory[]>((resolve, reject) => {
+  rangeRecevingHistory(
+    from: number,
+    to: number
+  ): Promise<Option<RecevingHistory[]>> {
+    return new Promise<Option<RecevingHistory[]>>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
@@ -482,7 +510,10 @@ export class ParaIndexer extends Indexer {
                                     createdAt
                                     asset
                                     amount
+                                    isLocal
                                     account
+                                    isRemote
+                                    location
                                     index
                                 }
                             }
@@ -490,7 +521,16 @@ export class ParaIndexer extends Indexer {
                         `
           )
           .then((data) => {
-            resolve(data.xTransferDepositeds.nodes)
+            if (data.xTransferDepositeds.nodes?.length > 0) {
+              resolve(
+                data.xTransferDepositeds.nodes.map((raw: any) => {
+                  // For now we just treat all as XCM receving data
+                  return paraFilterSingleXCMRecevingData(raw)
+                })
+              )
+            } else {
+              resolve(null)
+            }
           })
           .catch((e) => {
             reject(
