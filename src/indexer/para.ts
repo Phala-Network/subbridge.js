@@ -48,6 +48,7 @@ export class ParaIndexer extends Indexer {
                         resourceId
                         status
                         executeTx {
+                            sender
                             hash
                         }
                     }
@@ -127,8 +128,8 @@ export class ParaIndexer extends Indexer {
     })
   }
 
-  sendingHistory(): Promise<SendingHistory> {
-    return new Promise<SendingHistory>((resolve, reject) => {
+  sendingHistory(): Promise<SendingHistory[]> {
+    return new Promise<SendingHistory[]>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
@@ -147,6 +148,7 @@ export class ParaIndexer extends Indexer {
                                         sender
                                         recipient
                                         amount
+                                        sendTx
                                     }
                                     isChainbridge
                                     chainbridge {
@@ -156,6 +158,7 @@ export class ParaIndexer extends Indexer {
                                         resourceId
                                         recipient
                                         amount
+                                        sendTx
                                     }
                                 }
                             }
@@ -179,8 +182,8 @@ export class ParaIndexer extends Indexer {
     })
   }
 
-  limittedSendingHistory(limit: number): Promise<SendingHistory> {
-    return new Promise<SendingHistory>((resolve, reject) => {
+  limittedSendingHistory(limit: number): Promise<SendingHistory[]> {
+    return new Promise<SendingHistory[]>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
@@ -199,6 +202,7 @@ export class ParaIndexer extends Indexer {
                                         sender
                                         recipient
                                         amount
+                                        sendTx
                                     }
                                     isChainbridge
                                     chainbridge {
@@ -208,6 +212,7 @@ export class ParaIndexer extends Indexer {
                                         resourceId
                                         recipient
                                         amount
+                                        sendTx
                                     }
                                 }
                             }
@@ -231,8 +236,8 @@ export class ParaIndexer extends Indexer {
     })
   }
 
-  rangeSendingHistory(from: number, to: number): Promise<SendingHistory> {
-    return new Promise<SendingHistory>((resolve, reject) => {
+  rangeSendingHistory(from: number, to: number): Promise<SendingHistory[]> {
+    return new Promise<SendingHistory[]>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
@@ -253,6 +258,7 @@ export class ParaIndexer extends Indexer {
                                         sender
                                         recipient
                                         amount
+                                        sendTx
                                     }
                                     isChainbridge
                                     chainbridge {
@@ -262,6 +268,7 @@ export class ParaIndexer extends Indexer {
                                         resourceId
                                         recipient
                                         amount
+                                        sendTx
                                     }
                                 }
                             }
@@ -325,8 +332,8 @@ export class ParaIndexer extends Indexer {
     })
   }
 
-  recevingHistory(): Promise<RecevingHistory> {
-    return new Promise<RecevingHistory>((resolve, reject) => {
+  recevingHistory(): Promise<RecevingHistory[]> {
+    return new Promise<RecevingHistory[]>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
@@ -362,8 +369,8 @@ export class ParaIndexer extends Indexer {
     })
   }
 
-  limittedRecevingHistory(limit: number): Promise<RecevingHistory> {
-    return new Promise<RecevingHistory>((resolve, reject) => {
+  limittedRecevingHistory(limit: number): Promise<RecevingHistory[]> {
+    return new Promise<RecevingHistory[]>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
@@ -399,8 +406,8 @@ export class ParaIndexer extends Indexer {
     })
   }
 
-  rangeRecevingHistory(from: number, to: number): Promise<RecevingHistory> {
-    return new Promise<RecevingHistory>((resolve, reject) => {
+  rangeRecevingHistory(from: number, to: number): Promise<RecevingHistory[]> {
+    return new Promise<RecevingHistory[]>((resolve, reject) => {
       if (this.network === 'thala') {
         this.client
           .request(
