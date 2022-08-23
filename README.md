@@ -32,10 +32,10 @@
 
 	const account = keyring.addFromUri('//Alice')
 	const paraIndexer = new Indexer.ParaIndexer(
-			// Account public key
-	'0x7804e66ec9eea3d8daf6273ffbe0a8af25a8879cf43f14d0ebbb30941f578242',
-	// Name of parachain network
-	'thala'
+      // Account public key
+      '0x7804e66ec9eea3d8daf6273ffbe0a8af25a8879cf43f14d0ebbb30941f578242',
+      // Name of parachain network
+      'thala'
 	)
 	// Query all sending history issued from Khala network
 	const history = await paraIndexer.sendingHistory()
@@ -43,7 +43,7 @@
 	// You should then get the history list from our indexing service
   ```
 
-  Head to [example](./examples/) folder see more usage.
+  Head to [example](./examples/) folder see more usage. Run examples by executing `yarn build` and `node example/<script name>`.
 
 ## API
 
