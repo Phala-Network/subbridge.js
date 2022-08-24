@@ -5,21 +5,44 @@
 ![image ](./img/indexer-class.png)
 
 ```typescript
-abstract class Indexer {
+import {Option, Count, SendingHistory, RecevingHistory} from './types'
+
+export abstract class Indexer {
   /**
    * Account value should be either a 32 bytes substrate-compitable public key * or a 20 bytes Ethereum-like account address.
    */
   public account: string
+  public network: string
 
-  abstract sendingCount(): Promise<number>
-  abstract sendingHistory(): Promise<SendingHistory>
-  abstract limittedSendingHistory(limit: number): Promise<SendingHistory>
-  abstract rangeSendingHistory(limit: number): Promise<SendingHistory>
+  constructor(account: string, network: string) {
+    if (this.verifyAccount() === false || this.verifyNetwork() === false) {
+      throw new Error('Account or network verify failed')
+    }
+    this.account = account
+    this.network = network.toLocaleLowerCase()
+  }
 
-  abstract recevingCount(): Promise<number>
-  abstract RecevingHistory(): Promise<RecevingHistory>
-  abstract limittedRecevingHistory(limit: number): Promise<RecevingHistory>
-  abstract rangeRecevingHistory(limit: number): Promise<RecevingHistory>
+  abstract verifyAccount(): boolean
+  abstract verifyNetwork(): boolean
+  abstract sendingCount(): Promise<Option<Count>>
+  abstract sendingHistory(): Promise<Option<SendingHistory[]>>
+  abstract limittedSendingHistory(
+    limit: number
+  ): Promise<Option<SendingHistory[]>>
+  abstract rangeSendingHistory(
+    from: number,
+    to: number
+  ): Promise<Option<SendingHistory[]>>
+
+  abstract recevingCount(): Promise<Option<Count>>
+  abstract recevingHistory(): Promise<Option<RecevingHistory[]>>
+  abstract limittedRecevingHistory(
+    limit: number
+  ): Promise<Option<RecevingHistory[]>>
+  abstract rangeRecevingHistory(
+    from: number,
+    to: number
+  ): Promise<Option<RecevingHistory[]>>
 }
 ```
 
@@ -110,15 +133,10 @@ interface XCMRecevingData {
   readonly index: number
 }
 
-interface ChainbridgeRecevingData {
+export interface ChainbridgeConfirmData {
   readonly id: string
-  readonly asset: MultiAsset
-  readonly amount: string
-  readonly account: string
-  readonly index: number
   readonly originChainId: number
   readonly depositNonce: number
-  readonly resourceId: string
   readonly status: string
   readonly executeTx: Tx
 }
